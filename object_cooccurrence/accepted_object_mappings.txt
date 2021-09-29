@@ -1,0 +1,289 @@
+air conditioner 155
+altar 340
+armchair 34
+art 122
+bag 247
+balcony railing 380
+ball 223
+bar 271
+barricade 191
+basin 257
+basket 108
+bathtub 55
+bed 26
+bed sheet 464
+bedpost 404
+bench 49
+bidet 297
+bin 124
+blanket 181
+blinds 127
+board 219
+book 58
+bookcase 369
+books 104
+bookshelf 88
+bottle 82
+bottle of soap 279
+bottles 289
+bowl 128
+bowl of fruit 323
+box 45
+boxes 291
+bucket 148
+bulletin board 365
+bushes 354
+bust 306
+candelabra 327
+candle 150
+candles 341
+candlestick 236
+car 307
+case 382
+chair 7
+chair bottom 302
+chandelier 111
+chest 125
+chest of drawers 213
+chimney 393
+church seating 268
+clock 113
+closet 109
+closet shelf 413
+closet shelving 785
+cloth 278
+clothes 53
+clothes dryer 203
+clothes hanger rod 339
+clothes hangers 225
+clutter 159
+coat 276
+coat hanger 378
+coat rack 383
+coffee maker 373
+coffee table 47
+commode 310
+computer 361
+computer desk 237
+container 98
+control 358
+couch 24
+counter 66
+cup 208
+cupboard 265
+curtain 14
+curtain rod 166
+curtain valence 357
+curtains 165
+cushion 37
+decor 74
+decorative plate 269
+desk 42
+desk chair 134
+dining chair 25
+dining table 97
+dinner place setting 356
+dishwasher 207
+display case 254
+doll 312
+drawer 117
+drawers 96
+dress 315
+dresser 77
+drums 313
+duct 234
+easel 322
+easy chair 227
+electric wire casing 368
+end table 89
+exercise bike 410
+exercise equipment 290
+exercise machine 371
+exit sign 214
+fan 67
+faucet 62
+fence 144
+fencing 303
+figure 308
+fire alarm 375
+fire extinguisher 163
+fireplace 52
+flower 169
+flower pot 151
+flowers 158
+food 232
+footrest 333
+footstool 114
+fridge 385
+fruit bowl 367
+furniture 229
+glass 205
+globe 482
+grass 274
+guitar 251
+gym equipment 224
+hamper 388
+handbag 179
+handle 187
+hanger 286
+hangers 353
+hat 212
+headboard 140
+heater 138
+highchair 332
+hose 411
+jar 409
+keyboard 195
+kitchen appliance 326
+kitchen center island 343
+kitchen counter 83
+kitchen island 198
+kitchen shelf 284
+kitchen utensils 400
+knickknack 173
+knob 363
+ladder 210
+lamp 19
+lampshade 304
+landing 434
+laundry basket 408
+ledge 283
+locker 292
+lounge chair 228
+mask 149
+massage bed 362
+massage table 407
+microwave 126
+mirror 20
+monitor 94
+nightstand 27
+office chair 85
+office table 216
+ornament 296
+ottoman 80
+oven 112
+painter 218
+painting 43
+pan 384
+panel 204
+paper 391
+paper towel 199
+paper towel dispenser 301
+pedestal 143
+pew 146
+pews 282
+phone 201
+photo 63
+piano 217
+picture 5
+pillar 54
+pillow 10
+pillows 160
+placemat 342
+plant 16
+plant pot 233
+plants 161
+plate 135
+plate of food 344
+plush toy 350
+pool 325
+pool table 275
+post 141
+pot 41
+potted plant 261
+power breaker box 414
+printer 174
+projector 377
+purse 101
+rack 121
+radiator 197
+rail 72
+railing 106
+range hood 320
+refrigerator 87
+ridge 235
+robe 347
+rope 222
+round table 81
+scale 243
+screen 189
+sculpture 170
+seat 153
+shampoo 360
+sheet 345
+shelf 23
+shelf with clutter 381
+shelves 75
+shelving 171
+shoes 137
+showcase 403
+shower 182
+shower bench 395
+shower curtain 120
+shower curtain rod 156
+shower handle 316
+shower head 190
+shower soap shelf 298
+shrubbery 287
+sign 154
+sink 22
+smoke alarm 399
+smoke detector 415
+soap 193
+soap dish 335
+soap dispenser 206
+sofa 103
+sofa chair 29
+sofa set 309
+speaker 152
+stand 95
+statue 76
+stool 33
+storage shelving 372
+stove 115
+suitcase 386
+switch 184
+swivel chair 142
+table 15
+table lamp 69
+tap 359
+teapot 288
+telephone 176
+thermostat 196
+tissue box 133
+tissue paper 376
+toilet 28
+toilet brush 311
+toilet paper 65
+toilet paper dispenser 185
+toilet paper holder 256
+toiletry 91
+towel 21
+towel bar 258
+towels 164
+toy 329
+trash 239
+trash bin 244
+trash can 51
+tray 266
+treadmill 249
+tree 130
+trees 277
+trinket 389
+tv 38
+tv stand 136
+umbrella 406
+urn 267
+vanity 131
+vase 36
+vent 60
+wardrobe 90
+wardrobe rod 387
+wash basin 351
+washing machine 119
+water cooler 281
+weight machine 255
+weights 401
+whiteboard 318
+wood 346
+wooden chair 260
