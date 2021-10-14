@@ -12,6 +12,7 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from utils import padding_idx
 from ask_agent import AskAgent
 from verbal_ask_agent import VerbalAskAgent
+from object_detection_model import ObjectDetectionModel # ADDED
 
 class EncoderLSTM(nn.Module):
 
@@ -129,11 +130,13 @@ class AskAttnDecoderLSTM(nn.Module):
         self.ask_embedding = nn.Embedding(agent_class.n_input_ask_actions(),
             hparams.ask_embed_size)
 
-        lstm_input_size = hparams.nav_embed_size + hparams.ask_embed_size + hparams.img_feature_size
+        lstm_input_size = hparams.nav_embed_size + hparams.ask_embed_size + hparams.img_feature_size + 289 # ADDED
 
         self.budget_embedding = nn.Embedding(hparams.max_ask_budget, hparams.budget_embed_size)
 
         self.drop = nn.Dropout(p=hparams.dropout_ratio)
+
+        self.object_detection = ObjectDetectionModel(hparams=hparams, device=device) # ADDED
 
         self.lstm = nn.LSTM(
             lstm_input_size, hparams.hidden_size, hparams.num_lstm_layers,
@@ -170,13 +173,13 @@ class AskAttnDecoderLSTM(nn.Module):
         self.backprop_softmax = hparams.backprop_softmax
         self.backprop_ask_features = hparams.backprop_ask_features
 
-    def _lstm_and_attend(self, nav_action, ask_action, feature, h, ctx, ctx_mask,
+    def _lstm_and_attend(self, nav_action, ask_action, feature, h, ctx, ctx_mask, objects_nearby, # ADDED
         budget=None, cov=None):
 
         nav_embeds = self.nav_embedding(nav_action)
         ask_embeds = self.ask_embedding(ask_action)
 
-        lstm_inputs = [nav_embeds, ask_embeds, feature]
+        lstm_inputs = [nav_embeds, ask_embeds, feature, objects_nearby] # ADDED
 
         concat_lstm_input = torch.cat(lstm_inputs, dim=1)
         drop = self.drop(concat_lstm_input)
@@ -195,8 +198,12 @@ class AskAttnDecoderLSTM(nn.Module):
                 nav_logit_mask, ask_logit_mask,
                 budget=None, cov=None):
 
+        # ADDED
+        objects_nearby = self.object_detection(feature)
+
+        # ADDED objects_nearby=objects_nearby
         h_tilde, alpha, output_drop, new_h, new_cov = self._lstm_and_attend(
-            nav_action, ask_action, feature, h, ctx, ctx_mask, budget=budget, cov=cov)
+            nav_action, ask_action, feature, h, ctx, ctx_mask, objects_nearby=objects_nearby, budget=budget, cov=cov)
 
         # Predict nav action.
         nav_logit = self.nav_predictor(h_tilde)
@@ -214,7 +221,7 @@ class AskAttnDecoderLSTM(nn.Module):
 
         if not self.backprop_ask_features:
             concat_ask_predictor_input = concat_ask_predictor_input.detach()
-
+        
         ask_logit = self.ask_predictor(concat_ask_predictor_input)
         ask_logit.data.masked_fill_(ask_logit_mask, -float('inf'))
 
@@ -223,8 +230,12 @@ class AskAttnDecoderLSTM(nn.Module):
     def forward_nav(self, nav_action, ask_action, feature, h, ctx, ctx_mask,
                     nav_logit_mask, budget=None, cov=None):
 
+        # ADDED
+        objects_nearby = self.object_detection(feature)
+
+        # ADDED objects_nearby=objects_nearby  
         h_tilde, alpha, output_drop, new_h, new_cov = self._lstm_and_attend(
-            nav_action, ask_action, feature, h, ctx, ctx_mask, budget=budget, cov=cov)
+            nav_action, ask_action, feature, h, ctx, ctx_mask, objects_nearby=objects_nearby, budget=budget, cov=cov)
 
         # Predict nav action.
         nav_logit = self.nav_predictor(h_tilde)
