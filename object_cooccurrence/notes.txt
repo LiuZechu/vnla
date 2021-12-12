@@ -1,0 +1,11 @@
+accepted_objects.txt is directly from vnla 
+category_mapping.tsv is from https://github.com/niessner/Matterport/blob/master/metadata/category_mapping.tsv
+coocurrence_calculator.py is the actual one to generate a cooc matrix for the project
+data is the .house files for the 90 houses, directly copied from vnla
+accepted_object_mappings.txt is accepted_objects.txt mapped to category_mapping_index
+matterport_skybox_images contains jpg images of one house
+objects.txt contains the reduced set of 41 objects
+oLBMNvg9in8.house is one sample .house file 
+object_index_mapper.py is the actual one generating the mappings.txt
+test.py is the test file to visualise ONE house's cooc matrix
+

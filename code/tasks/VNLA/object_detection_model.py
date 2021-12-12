@@ -14,7 +14,8 @@ class ObjectDetectionModel(nn.Module):
 
         # load cooccurrence matrix
         self.cooccurrence_matrix = torch.load('matrix.pt').to(device=device)
-        
+        # TODO: check whether matrix is updated during training; freeze weights
+
         # neural network for object detection
         output_size = 289 # TODO: remove hardcoding
         input_size = hparams.img_feature_size

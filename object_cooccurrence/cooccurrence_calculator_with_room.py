@@ -3,6 +3,8 @@ import math
 import matplotlib.pyplot as plt
 import torch
 
+from room_object_cooccurrence import generate_room_object_cooccurrence_counts
+
 DIR_PATH = "./data"
 
 def get_accepted_object_indices():
@@ -58,6 +60,29 @@ def generate_cooccurrence_matrix(accepted_object_indices):
 
   return cooccurrence_matrix
 
+# Added this function to generate a square matrix that includes room-object cooccurrence as well.
+def generate_cooccurrence_matrix_with_room(object_cooccurrence_matrix):
+  room_object_cooccurrence_matrix = generate_room_object_cooccurrence_counts()
+  
+  res = []
+  # Construct the first |O| rows of the res matrix 
+  for index, row in enumerate(object_cooccurrence_matrix):
+    new_row = row.copy()
+    for room_row in room_object_cooccurrence_matrix:
+      new_row.append(room_row[index])
+    res.append(new_row)
+
+  # Construct the last |R| rows of the res matrix
+  for index, row in enumerate(room_object_cooccurrence_matrix):
+    new_row = row.copy()
+    suffix = [0] * len(room_object_cooccurrence_matrix)
+    suffix[index] = sum(row)
+    new_row += suffix
+    res.append(new_row)
+
+  return res
+
+
 def normalise_pmi(cooccurrence_matrix):
   # Normalise by Pairwise Mutual Information (PMI)
   total_num_pairs = 0
@@ -94,12 +119,16 @@ def normalise_rowwise(cooccurrence_matrix):
       if j == i:
         normalised_matrix[i][j] = 1
       else:
-        normalised_matrix[i][j] = cooccurrence_matrix[i][j] / summation
+        normalised_matrix[i][j] = 0 if summation == 0 else cooccurrence_matrix[i][j] / summation
   
   return normalised_matrix
 
-def visualise(matrix_1, matrix_2, title_1, title_2):
+def visualise(matrix_1, matrix_2, title_1, title_2, is_room_included=False):
   object_words = ['airconditioner', 'altar', 'armchair', 'art', 'bag', 'balconyrailing', 'ball', 'bar', 'barricade', 'basin', 'basket', 'bathtub', 'bed', 'bedsheet', 'bedpost', 'bench', 'bidet', 'bin', 'blanket', 'blinds', 'board', 'book', 'bookcase', 'books', 'bookshelf', 'bottle', 'bottleofsoap', 'bottles', 'bowl', 'bowloffruit', 'box', 'boxes', 'bucket', 'bulletinboard', 'bushes', 'bust', 'candelabra', 'candle', 'candles', 'candlestick', 'car', 'case', 'chair', 'chairbottom', 'chandelier', 'chest', 'chestofdrawers', 'chimney', 'churchseating', 'clock', 'closet', 'closetshelf', 'closetshelving', 'cloth', 'clothes', 'clothesdryer', 'clotheshangerrod', 'clotheshangers', 'clutter', 'coat', 'coathanger', 'coatrack', 'coffeemaker', 'coffeetable', 'commode', 'computer', 'computerdesk', 'container', 'control', 'couch', 'counter', 'cup', 'cupboard', 'curtain', 'curtainrod', 'curtainvalence', 'curtains', 'cushion', 'decor', 'decorativeplate', 'desk', 'deskchair', 'diningchair', 'diningtable', 'dinnerplacesetting', 'dishwasher', 'displaycase', 'doll', 'drawer', 'drawers', 'dress', 'dresser', 'drums', 'duct', 'easel', 'easychair', 'electricwirecasing', 'endtable', 'exercisebike', 'exerciseequipment', 'exercisemachine', 'exitsign', 'fan', 'faucet', 'fence', 'fencing', 'figure', 'firealarm', 'fireextinguisher', 'fireplace', 'flower', 'flowerpot', 'flowers', 'food', 'footrest', 'footstool', 'fridge', 'fruitbowl', 'furniture', 'glass', 'globe', 'grass', 'guitar', 'gymequipment', 'hamper', 'handbag', 'handle', 'hanger', 'hangers', 'hat', 'headboard', 'heater', 'highchair', 'hose', 'jar', 'keyboard', 'kitchenappliance', 'kitchencenterisland', 'kitchencounter', 'kitchenisland', 'kitchenshelf', 'kitchenutensils', 'knickknack', 'knob', 'ladder', 'lamp', 'lampshade', 'landing', 'laundrybasket', 'ledge', 'locker', 'loungechair', 'mask', 'massagebed', 'massagetable', 'microwave', 'mirror', 'monitor', 'nightstand', 'officechair', 'officetable', 'ornament', 'ottoman', 'oven', 'painter', 'painting', 'pan', 'panel', 'paper', 'papertowel', 'papertoweldispenser', 'pedestal', 'pew', 'pews', 'phone', 'photo', 'piano', 'picture', 'pillar', 'pillow', 'pillows', 'placemat', 'plant', 'plantpot', 'plants', 'plate', 'plateoffood', 'plushtoy', 'pool', 'pooltable', 'post', 'pot', 'pottedplant', 'powerbreakerbox', 'printer', 'projector', 'purse', 'rack', 'radiator', 'rail', 'railing', 'rangehood', 'refrigerator', 'ridge', 'robe', 'rope', 'roundtable', 'scale', 'screen', 'sculpture', 'seat', 'shampoo', 'sheet', 'shelf', 'shelfwithclutter', 'shelves', 'shelving', 'shoes', 'showcase', 'shower', 'showerbench', 'showercurtain', 'showercurtainrod', 'showerhandle', 'showerhead', 'showersoapshelf', 'shrubbery', 'sign', 'sink', 'smokealarm', 'smokedetector', 'soap', 'soapdish', 'soapdispenser', 'sofa', 'sofachair', 'sofaset', 'speaker', 'stand', 'statue', 'stool', 'storageshelving', 'stove', 'suitcase', 'switch', 'swivelchair', 'table', 'tablelamp', 'tap', 'teapot', 'telephone', 'thermostat', 'tissuebox', 'tissuepaper', 'toilet', 'toiletbrush', 'toiletpaper', 'toiletpaperdispenser', 'toiletpaperholder', 'toiletry', 'towel', 'towelbar', 'towels', 'toy', 'trash', 'trashbin', 'trashcan', 'tray', 'treadmill', 'tree', 'trees', 'trinket', 'tv', 'tvstand', 'umbrella', 'urn', 'vanity', 'vase', 'vent', 'wardrobe', 'wardroberod', 'washbasin', 'washingmachine', 'watercooler', 'weightmachine', 'weights', 'whiteboard', 'wood', 'woodenchair']
+  room_words = ['bathroom', 'bedroom', 'closet', 'dining room', 'entryway', 'familyroom', 'garage', 'hallway', 'library', 'laundryroom', 'kitchen', 'living room', 'meetingroom', 'lounge', 'office', 'porch', 'recreation', 'stairs', 'toilet', 'utilityroom', 'tv', 'gym', 'outdoors', 'balcony', 'other room', 'bar', 'classroom', 'dining booth', 'spa', 'junk', 'no label']
+
+  if is_room_included:
+    object_words += room_words
 
   f, axes = plt.subplots(1, 2)
   f.set_size_inches(10, 10)
@@ -121,15 +150,20 @@ def visualise(matrix_1, matrix_2, title_1, title_2):
 
 def main():
   accepted_object_indices = get_accepted_object_indices()
-  cooccurrence_matrix = generate_cooccurrence_matrix(accepted_object_indices)
-  normalised_matrix_1 = normalise_pmi(cooccurrence_matrix)
-  normalised_matrix_2 = normalise_rowwise(cooccurrence_matrix)
+  object_cooccurrence_matrix = generate_cooccurrence_matrix(accepted_object_indices)
+  room_obj_cooc_matrix = generate_cooccurrence_matrix_with_room(object_cooccurrence_matrix)
+  normalised_matrix_1 = normalise_pmi(room_obj_cooc_matrix)
+  normalised_matrix_2 = normalise_rowwise(room_obj_cooc_matrix)
 
   # save matrix
-  # tensor = torch.FloatTensor(normalised_matrix_2)
-  # torch.save(tensor, 'matrix.pt', _use_new_zipfile_serialization=False)
+  tensor = torch.FloatTensor(normalised_matrix_1)
+  torch.save(tensor, 'matrix.pt', _use_new_zipfile_serialization=False)
 
-  # visualise(normalised_matrix_1, normalised_matrix_2, "PMI Normalised", "Row-wise Normalised")
+  # print("matrix dimension is: ")
+  # print(len(normalised_matrix_1))
+  # print("====")
+
+  # visualise(normalised_matrix_1, normalised_matrix_2, "PMI Normalised", "Row-wise Normalised", is_room_included=True)
 
 if __name__ == "__main__":
   main()

@@ -77,6 +77,46 @@ def visualise(matrix, title):
 
   plt.show()
 
+# External file should call this function to get the cooc counts matrix of dimension [|R|, |O|]
+def generate_room_object_cooccurrence_counts():
+  room_indices = {
+    'a': 0,
+    'b': 1,
+    'c': 2,
+    'd': 3,
+    'e': 4,
+    'f': 5,
+    'g': 6,
+    'h': 7,
+    'i': 8,
+    'j': 9,
+    'k': 10,
+    'l': 11,
+    'm': 12,
+    'n': 13,
+    'o': 14,
+    'p': 15,
+    'r': 16,
+    's': 17,
+    't': 18,
+    'u': 19,
+    'v': 20,
+    'w': 21,
+    'x': 22,
+    'y': 23,
+    'z': 24,
+    'B': 25,
+    'C': 26,
+    'D': 27,
+    'S': 28,
+    'Z': 29,
+    '-': 30
+  }
+
+  accepted_object_indices = get_accepted_object_indices()
+  cooccurrence_matrix = generate_cooccurrence_matrix(accepted_object_indices, room_indices)
+  return cooccurrence_matrix
+
 def main():
   room_indices = {
     'a': 0,
