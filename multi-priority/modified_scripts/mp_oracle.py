@@ -307,6 +307,7 @@ class MultistepShortestPathOracle(ShortestPathOracle):
         self.n_steps = n_steps
         self.env_nav_actions = env_nav_actions
 
+    # NOTE: MAIN PART to modify for multi-priority goals
     def _shortest_path_actions(self, ob):
         actions = []
         self.sim.newEpisode(ob['scan'], ob['viewpoint'], ob['heading'], ob['elevation'])
@@ -322,21 +323,33 @@ class MultistepShortestPathOracle(ShortestPathOracle):
             # Take action
             self.sim.makeAction(*action)
 
-            if action == (0, 0, 0):
+            # if action == (0, 0, 0):
+            #     break
+            if action == (0, 0, 0) and not ob['reached_first_goal']:
+                ob['reached_first_goal'] = True
+                ob['goal_viewpoints'] = ob['second_goal_viewpoints']
+            elif action == (0, 0, 0) and ob['reached_first_goal']:
                 break
 
             state = self.sim.getState()
-            ob = {
-                    'viewpoint': state.location.viewpointId,
-                    'viewIndex': state.viewIndex,
-                    'heading'  : state.heading,
-                    'elevation': state.elevation,
-                    'navigableLocations': state.navigableLocations,
-                    'point'    : state.location.point,
-                    'ended'    : ob['ended'] or action == (0, 0, 0),
-                    'goal_viewpoints': ob['goal_viewpoints'],
-                    'scan'     : ob['scan']
-                }
+            # ob = {
+            #         'viewpoint': state.location.viewpointId,
+            #         'viewIndex': state.viewIndex,
+            #         'heading'  : state.heading,
+            #         'elevation': state.elevation,
+            #         'navigableLocations': state.navigableLocations,
+            #         'point'    : state.location.point,
+            #         'ended'    : ob['ended'] or action == (0, 0, 0),
+            #         'goal_viewpoints': ob['goal_viewpoints'],
+            #         'scan'     : ob['scan']
+            #     }
+            ob['viewpoint'] = state.location.viewpointId,
+            ob['viewIndex'] = state.viewIndex,
+            ob['heading'] = state.heading,
+            ob['elevation'] = state.elevation,
+            ob['navigableLocations'] = state.navigableLocations,
+            ob['point'] = state.location.point,
+            ob['ended'] = ob['ended'] or (action == (0, 0, 0) and ob['reached_first_goal']),
 
         return actions
 

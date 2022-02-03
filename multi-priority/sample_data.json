@@ -1,0 +1,877 @@
+[
+    {
+        "distances": [
+            24.031958555833757,
+            22.736805176033286
+        ],
+        "end_region_name": "living room",
+        "end_regions": [
+            48,
+            48
+        ],
+        "heading": 1.0471975511965976,
+        "instructions": [
+            "find an armchair in the living room ."
+        ],
+        "object_indices": [
+            [
+                1399
+            ],
+            [
+                1417
+            ]
+        ],
+        "object_name": "armchair",
+        "path_id": 261776,
+        "paths": [
+            [
+                "cfa7edd3cdea4c428cd1b2e2bdb4aa31",
+                "3d0386c86a4a4ada8dc4a3ac54e7315c",
+                "bff73ad3851642d79ce25063c9c5a71e",
+                "22371c52a50b48419ce5042d631eb1a6",
+                "c9e3b241fc8c4bad8b8d5d9e3192ae0a",
+                "e4ee9fc1de3f44779759a399b5c0ed7b",
+                "b5dc366ccba3406db2e04b8e1fd2270e",
+                "2b9575c049fc4539967fffe928f95c2f",
+                "5530eac6cc8540a8ba22d50487a5dd2f",
+                "89930128220c45b8bb04c3d3990b202c",
+                "71c368170cd24345ac3dd89c51ca33ef",
+                "3b1e1e0fc3de4418b73673c25ca83431"
+            ],
+            [
+                "cfa7edd3cdea4c428cd1b2e2bdb4aa31",
+                "3d0386c86a4a4ada8dc4a3ac54e7315c",
+                "bff73ad3851642d79ce25063c9c5a71e",
+                "22371c52a50b48419ce5042d631eb1a6",
+                "c9e3b241fc8c4bad8b8d5d9e3192ae0a",
+                "e4ee9fc1de3f44779759a399b5c0ed7b",
+                "57f69b8347254b6d8211063688b39e56",
+                "13539678a339494dbe249d3e8137778d",
+                "35fbae92aa284ba19652ccb31f4cff9c",
+                "46959f49c0b9487daf8ee51d602d3a4f"
+            ]
+        ],
+        "scan": "vyrNrziPKCB",
+        "start_region": 8,
+        "start_region_name": "bathroom",
+        "trajectories": [
+            [
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    -1
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    -1
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            [
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    -1
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    1
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ]
+        ]
+    },
+    {
+        "distances": [
+            10.446733961825974
+        ],
+        "end_region_name": "dining room",
+        "end_regions": [
+            49
+        ],
+        "heading": 5.759586531581287,
+        "instructions": [
+            "find a painting in one of the dining rooms ."
+        ],
+        "object_indices": [
+            [
+                1554
+            ]
+        ],
+        "object_name": "painting",
+        "path_id": 263734,
+        "paths": [
+            [
+                "2b9575c049fc4539967fffe928f95c2f",
+                "57f69b8347254b6d8211063688b39e56",
+                "13539678a339494dbe249d3e8137778d",
+                "b5145233e4ab457ba0c31f9eb20307bf",
+                "a73871837379498eb16527c6b9c9aa20"
+            ]
+        ],
+        "scan": "vyrNrziPKCB",
+        "start_region": 52,
+        "start_region_name": "staircase",
+        "trajectories": [
+            [
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ]
+        ]
+    },
+    {
+        "distances": [
+            7.6655968513797
+        ],
+        "end_region_name": "familyroom",
+        "end_regions": [
+            38
+        ],
+        "heading": 5.759586531581287,
+        "instructions": [
+            "find a fireplace in one of the familyrooms ."
+        ],
+        "object_indices": [
+            [
+                1096
+            ]
+        ],
+        "object_name": "fireplace",
+        "path_id": 260697,
+        "paths": [
+            [
+                "67c20b163349417893a145ea7a3f1cd7",
+                "52771bb222044d689a1676d9d2085b85",
+                "e3fd312ce2a2403bb5c3e3fed63bc42f",
+                "dc30c1404c44455ba1f72a0cd51d536c"
+            ]
+        ],
+        "scan": "vyrNrziPKCB",
+        "start_region": 31,
+        "start_region_name": "office",
+        "trajectories": [
+            [
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ]
+        ]
+    },
+    {
+        "distances": [
+            19.191935469036792
+        ],
+        "end_region_name": "living room",
+        "end_regions": [
+            48
+        ],
+        "heading": 1.5707963267948966,
+        "instructions": [
+            "find an ottoman in the living room ."
+        ],
+        "object_indices": [
+            [
+                1428
+            ]
+        ],
+        "object_name": "ottoman",
+        "path_id": 262450,
+        "paths": [
+            [
+                "ceae9606b23d4b31a157923b09655baa",
+                "e5440b494f3d483d91d857f8eb126b1d",
+                "9186192bc71b4e868af5b35244643ca4",
+                "5791a80c086b44a7a4e868d22fc374cc",
+                "74ce15df381c460a8be6fac9709c6a58",
+                "d509ae119b9f44daa01672e8e84a8e18",
+                "a73871837379498eb16527c6b9c9aa20",
+                "b5145233e4ab457ba0c31f9eb20307bf",
+                "5530eac6cc8540a8ba22d50487a5dd2f",
+                "89930128220c45b8bb04c3d3990b202c"
+            ]
+        ],
+        "scan": "vyrNrziPKCB",
+        "start_region": 25,
+        "start_region_name": "laundryroom or mudroom",
+        "trajectories": [
+            [
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ]
+        ]
+    },
+    {
+        "distances": [
+            26.129195523350692
+        ],
+        "end_region_name": "hallway",
+        "end_regions": [
+            42
+        ],
+        "heading": 0,
+        "instructions": [
+            "find a statue in one of the hallways ."
+        ],
+        "object_indices": [
+            [
+                1210
+            ]
+        ],
+        "object_name": "statue",
+        "path_id": 250040,
+        "paths": [
+            [
+                "6fe29c72b80b449492666e34067f9008",
+                "413c77e209de4113b311424bcaa62bb5",
+                "b5a0556b734741f5be20682706ab2ceb",
+                "6cd3f0b6fb694de88dccb49a659b30f4",
+                "ef30fe0d0c9e441cb78c01291f91f83c",
+                "e6bc44e73bc64bfd8261fc08f009e88d",
+                "a754489b27764d63a334de800a3a6cef",
+                "b637b622335f44869ad8cc595cda3d9c",
+                "e8b5fb3a96e140398b0bc3600c04c7e9",
+                "c5bd22ef651543849baceac1a199192b"
+            ]
+        ],
+        "scan": "vyrNrziPKCB",
+        "start_region": 19,
+        "start_region_name": "recreation room or game room",
+        "trajectories": [
+            [
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ]
+        ]
+    },
+    {
+        "distances": [
+            38.39414860612103
+        ],
+        "end_region_name": "kitchen",
+        "end_regions": [
+            23
+        ],
+        "heading": 5.759586531581287,
+        "instructions": [
+            "find a kitchen center island in one of the kitchens ."
+        ],
+        "object_indices": [
+            [
+                626
+            ]
+        ],
+        "object_name": "kitchen center island",
+        "path_id": 255537,
+        "paths": [
+            [
+                "183c3535804243ee98b34c91d426c15d",
+                "605b9d1acb8b4308b721ea2f4f3b7bd4",
+                "1cd66713320a4367930c7df6f5a41c2e",
+                "4694bfd84fbd4a04a83fb00c435a34f5",
+                "ef528c56c13741aba6727972f89dc5c2",
+                "80984eb5f1b446e7941cf10d542554e2",
+                "605736f22ba342a19dd128b758abe427",
+                "fc340f9df37543709fd49bba4b3a3372",
+                "71c368170cd24345ac3dd89c51ca33ef",
+                "6f5e70ae957d4a95af44068aa4946744",
+                "35fbae92aa284ba19652ccb31f4cff9c",
+                "b5145233e4ab457ba0c31f9eb20307bf",
+                "a73871837379498eb16527c6b9c9aa20",
+                "468e68b506364540972f4c718ca8c752"
+            ]
+        ],
+        "scan": "vyrNrziPKCB",
+        "start_region": 35,
+        "start_region_name": "porch or terrace or deck or driveway",
+        "trajectories": [
+            [
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    -1,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0
+                ]
+            ]
+        ]
+    }
+]

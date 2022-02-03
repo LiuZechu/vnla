@@ -41,6 +41,7 @@ def combine_two_tasks(task1, task2):
   new_task['second_object_indices'] = task2['object_indices']
   new_task['second_object_name'] = task2['object_name']
   new_task['start_viewpoint'] = task1['paths'][0][0]
+  new_task['instr_id'] = int(str(task1['path_id']) + str(task2['path_id']))
 
   first_goal_viewpoints = []
   for path in task1['paths']:

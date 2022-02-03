@@ -115,12 +115,12 @@ class VNLABatch():
                 else:
                     self.traj_len_estimates[k] = self.max_episode_length
 
-    def make_traj_estimate_key(self, item):
-        if self.no_room:
-            key = (item['start_region_name'], item['object_name'])
-        else:
-            key = (item['start_region_name'], item['end_region_name'])
-        return key
+    # def make_traj_estimate_key(self, item):
+    #     if self.no_room:
+    #         key = (item['start_region_name'], item['object_name']) # NOTE: haven't changed for no_room
+    #     else:
+    #         key = (item['start_region_name'], item['end_region_name'])
+    #     return key
 
     def encode(self, instr):
         if self.tokenizer is None:
@@ -130,18 +130,23 @@ class VNLABatch():
     def load_data(self, data):
         self.data = []
         self.scans = set()
-        for item in data:
+        for index, item in enumerate(data):
             self.scans.add(item['scan'])
-            key = self.make_traj_estimate_key(item)
-            self.traj_len_estimates[key].extend(
-                len(t) for t in item['trajectories'])
 
-            for j,instr in enumerate(item['instructions']):
-                new_item = dict(item)
-                del new_item['instructions']
-                new_item['instr_id'] = '%s_%d' % (item['path_id'], j)
-                new_item['instruction'] = instr
-                self.data.append(new_item)
+            # NOTE: `trajectories` info is absent in new multipri dataset
+            # key = self.make_traj_estimate_key(item)
+            # self.traj_len_estimates[key].extend(
+            #     len(t) for t in item['trajectories'])
+
+            # for j,instr in enumerate(item['instructions']):
+            #     new_item = dict(item)
+            #     del new_item['instructions']
+            #     new_item['instr_id'] = '%s_%d' % (item['path_id'], j)
+            #     new_item['instruction'] = instr
+            #     self.data.append(new_item)            
+            new_item = dict(item)
+            new_item['instr_id'] = str(index)
+            self.data.append(new_item)
 
         self.reset_epoch()
 
@@ -184,8 +189,11 @@ class VNLABatch():
                 'step' : state.step,
                 'navigableLocations' : state.navigableLocations,
                 'instruction' : self.instructions[i],
-                'goal_viewpoints' : [path[-1] for path in item['paths']],
-                'init_viewpoint' : item['paths'][0][0]
+                'goal_viewpoints': item['first_goal_viewpoints'], # NOTE: change this to second_goal_viewpoints after reaching 
+                'first_goal_viewpoints' : item['first_goal_viewpoints'], # NOTE: changed here
+                'second_goal_viewpoints' : item['second_goal_viewpoints'], # NOTE: changed here
+                'init_viewpoint' : item['start_viewpoint'], # NOTE: changed here
+                'reached_first_goal': False # NOTE: changed here
             })
             obs[-1]['max_queries'] = self.max_queries_constraints[i]
             obs[-1]['traj_len'] = self.traj_lens[i]
@@ -207,8 +215,10 @@ class VNLABatch():
         self._next_minibatch()
 
         scanIds = [item['scan'] for item in self.batch]
-        viewpointIds = [item['paths'][0][0] for item in self.batch]
-        headings = [item['heading'] for item in self.batch]
+        # NOTE: changed here
+        # these are the `start_viewpoint`s
+        viewpointIds = [item['start_viewpoint'] for item in self.batch]
+        headings = [item['initial_heading'] for item in self.batch]
         self.instructions = [item['instruction'] for item in self.batch]
         self.env.newEpisodes(scanIds, viewpointIds, headings)
 
@@ -217,14 +227,16 @@ class VNLABatch():
 
         for i, item in enumerate(self.batch):
             # Assign time budget
-            if is_eval:
-                # If eval use expected trajectory length between start_region and end_region
-                key = self.make_traj_estimate_key(item)
-                traj_len_estimate = self.traj_len_estimates[key]
-            else:
-                # If train use average oracle trajectory length
-                traj_len_estimate = sum(len(t)
-                    for t in item['trajectories']) / len(item['trajectories'])
+            # if is_eval:
+            #     # If eval use expected trajectory length between start_region and end_region
+            #     key = self.make_traj_estimate_key(item)
+            #     traj_len_estimate = self.traj_len_estimates[key]
+            # else:
+            #     # If train use average oracle trajectory length
+            #     traj_len_estimate = sum(len(t)
+            #         for t in item['trajectories']) / len(item['trajectories'])
+
+            traj_len_estimate = 50 # NOTE: this is hardcoded for now
             self.traj_lens[i] = min(self.max_episode_length, int(round(traj_len_estimate)))
 
             # Assign help-requesting budget
@@ -237,17 +249,12 @@ class VNLABatch():
         self.env.makeActions(actions)
         return self._get_obs()
 
-    def modify_instruction(self, idx, instr, type):
-        ''' Modify end-goal. '''
-        if type == 'prepend':
-            self.instructions[idx] = instr + self.batch[idx]['instruction']
-        elif type == 'append':
-            self.instructions[idx] = self.batch[idx]['instruction'] + instr
-        elif type == 'replace':
-            self.instructions[idx] = instr
+    def prepend_instruction(self, idx, instr):
+        ''' Prepend subgoal to end-goal. '''
+
+        self.instructions[idx] = instr + ' . ' + self.batch[idx]['instruction']
 
     def get_obs(self):
         return self._get_obs()
-
 
 
