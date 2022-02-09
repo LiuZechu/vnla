@@ -36,13 +36,15 @@ class Evaluation(object):
         self.instr_ids = []
         scans = []
         for item in data:
-            self.gt[str(item['path_id'])] = item
-            if isinstance(item['path_id'], int):
-                self.instr_ids.extend(['%d_%d' % (item['path_id'],i)
-                    for i in range(len(item['instructions']))])
+            self.gt[str(item['instr_id'])] = item
+            if isinstance(item['instr_id'], int):
+                # self.instr_ids.extend(['%d_%d' % (item['path_id'],i)
+                #     for i in range(len(item['instructions']))])
+                self.instr_ids.append(str(item['instr_id']))
             else:
-                self.instr_ids.extend(['%s_%d' % (item['path_id'],i)
-                    for i in range(len(item['instructions']))])
+                # self.instr_ids.extend(['%s_%d' % (item['path_id'],i)
+                #     for i in range(len(item['instructions']))])
+                self.instr_ids.append(item['instr_id'])
             scans.append(item['scan'])
         self.instr_ids = set(self.instr_ids)
         scans = set(scans)
@@ -65,21 +67,23 @@ class Evaluation(object):
         return near_id
 
     def _score_item(self, instr_id, path):
-        gt = self.gt[instr_id[:instr_id.rfind('_')]]
+        # gt = self.gt[instr_id[:instr_id.rfind('_')]]
+        gt = self.gt[instr_id]
         scan = gt['scan']
 
         self.scores['instr_id'].append(instr_id)
         self.scores['trajectory_steps'].append(len(path) - 1)
 
         nav_errors = oracle_errors = 1e9
-        for shortest_path in gt['paths']:
-            start = shortest_path[0]
-            assert start == path[0][0], 'Result trajectories should include the start position'
-            goal = shortest_path[-1]
-            final_pos = path[-1][0]
-            nearest_pos = self._get_nearest(scan, goal, path)
-            nav_errors = min(nav_errors, self.distances[scan][final_pos][goal])
-            oracle_errors = min(oracle_errors, self.distances[scan][nearest_pos][goal])
+        # NOTE: commented this out since paths is no longer available in the new multipri dataset
+        # for shortest_path in gt['paths']:
+        #     start = shortest_path[0]
+        #     assert start == path[0][0], 'Result trajectories should include the start position'
+        #     goal = shortest_path[-1]
+        #     final_pos = path[-1][0]
+        #     nearest_pos = self._get_nearest(scan, goal, path)
+        #     nav_errors = min(nav_errors, self.distances[scan][final_pos][goal])
+        #     oracle_errors = min(oracle_errors, self.distances[scan][nearest_pos][goal])
 
         self.scores['nav_errors'].append(nav_errors)
         self.scores['oracle_errors'].append(oracle_errors)
@@ -92,10 +96,14 @@ class Evaluation(object):
 
         if not self.no_room:
             goal_room = None
-            for shortest_path in gt['paths']:
+            # for shortest_path in gt['paths']:
+            #     assert goal_room is None or goal_room == \
+            #         self.panos_to_region[scan][shortest_path[-1]]
+            #     goal_room = self.panos_to_region[scan][shortest_path[-1]]
+            for goal_viewpoint in gt['goal_viewpoints']:
                 assert goal_room is None or goal_room == \
-                    self.panos_to_region[scan][shortest_path[-1]]
-                goal_room = self.panos_to_region[scan][shortest_path[-1]]
+                    self.panos_to_region[scan][goal_viewpoint]
+                goal_room = self.panos_to_region[scan][goal_viewpoint]
 
             assert goal_room is not None
             final_room = self.panos_to_region[scan][path[-1][0]]
