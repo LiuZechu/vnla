@@ -90,6 +90,10 @@ class Evaluation(object):
         distance = 0
         prev = path[0]
         for curr in path[1:]:
+            #print("prev[0]:")
+            #print(prev[0])
+            #print("curr[0]")
+            #print(curr[0])
             distance += self.distances[scan][prev[0]][curr[0]]
             prev = curr
         self.scores['trajectory_lengths'].append(distance)
@@ -100,7 +104,7 @@ class Evaluation(object):
             #     assert goal_room is None or goal_room == \
             #         self.panos_to_region[scan][shortest_path[-1]]
             #     goal_room = self.panos_to_region[scan][shortest_path[-1]]
-            for goal_viewpoint in gt['goal_viewpoints']:
+            for goal_viewpoint in gt['second_goal_viewpoints']:
                 assert goal_room is None or goal_room == \
                     self.panos_to_region[scan][goal_viewpoint]
                 goal_room = self.panos_to_region[scan][goal_viewpoint]
@@ -119,12 +123,12 @@ class Evaluation(object):
         with open(output_file) as f:
             for item in json.load(f):
                 # Check against expected ids
-                if item['instr_id'] in instr_ids:
-                    instr_ids.remove(item['instr_id'])
-                    self._score_item(item['instr_id'], item['trajectory'])
-        assert len(instr_ids) == 0, 'Missing %d of %d instruction ids from %s - not in %s'\
-                       % (len(instr_ids), len(self.instr_ids), ",".join(self.splits), output_file)
-        assert len(self.scores['nav_errors']) == len(self.instr_ids)
+                if str(item['instr_id']) in instr_ids:
+                    instr_ids.remove(str(item['instr_id']))
+                    self._score_item(str(item['instr_id']), item['trajectory'])
+        # assert len(instr_ids) == 0, 'Missing %d of %d instruction ids from %s - not in %s'\
+        #               % (len(instr_ids), len(self.instr_ids), ",".join(self.splits), output_file)
+        # assert len(self.scores['nav_errors']) == len(self.instr_ids)
         score_summary = {
             'nav_error': np.average(self.scores['nav_errors']),
             'oracle_error': np.average(self.scores['oracle_errors']),

@@ -45,9 +45,14 @@ class BaseAgent(object):
         self.results = {}
         looped = False
         traj = []
+        #counter = 0 # NOTE: ADDED FOR TESTING
         with torch.no_grad():
             while True:
                 for t in self.rollout():
+                    #counter += 1 # NOTE: ADDED THIS FOR TESTING
+                    #if counter == 10: # NOTE: ADDED THIS FOR TESTING
+                    #   looped = True # NOTE: ADDED THIS FOR TESTING
+                    #   break # NOTE: ADDED THIS FOR TESTING
                     if t['instr_id'] in self.results:
                         looped = True
                     else:

@@ -97,9 +97,9 @@ class VerbalAskAgent(AskAgent):
         queries_unused = [ob['max_queries'] for ob in obs]
 
         episode_len = max(ob['traj_len'] for ob in obs)
-
+        # print("starting a roll out")
         for time_step in range(episode_len):
-
+            # print("time_step now is " + str(time_step))
             # Mask out invalid actions
             nav_logit_mask = torch.zeros(batch_size,
                 AskAgent.n_output_nav_actions(), dtype=torch.uint8, device=self.device)
@@ -220,6 +220,8 @@ class VerbalAskAgent(AskAgent):
             a_t = torch.tensor(a_t_list, dtype=torch.long, device=self.device)
 
             # Take nav action
+            # print("env_action: ")
+            # print(env_action)
             obs = self.env.step(env_action)
 
             # Save trajectory output

@@ -145,7 +145,10 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
         if eval_mode:
             loss_str = '\n * eval mode'
         else:
+            print("interval: " + str(interval))
             traj = agent.train(train_env, optimizer, interval, train_feedback)
+
+            print("gonna print stats")
 
             train_losses = np.array(agent.losses)
             assert len(train_losses) == interval

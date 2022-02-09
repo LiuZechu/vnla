@@ -53,6 +53,7 @@ class ShortestPathOracle(object):
         best_point = None
 
         for end_point in end_points:
+            graph = utils.load_nav_graphs(scan, path=None)
             d = self.distances[scan][start_point][end_point]
             if d < best_d:
                 best_d = d
@@ -133,6 +134,7 @@ class ShortestPathOracle(object):
         # If the action is not `forward`, simply map it to the simulator's
         # action space
         if action_idx != self.agent_nav_actions.index('forward'):
+            # print("map to sim's action space; not forward.")
             return self.env_nav_actions[action_idx]
 
         scan = ob['scan']
@@ -146,6 +148,7 @@ class ShortestPathOracle(object):
         # If it is at the goal, take action 1.
         # The dataset guarantees that the goal is always reachable.
         if len(optimal_path) < 2:
+            # print("at the goal, take action (1,0,0)")
             return (1, 0, 0)
 
         next_optimal_point = optimal_path[1]
@@ -159,9 +162,16 @@ class ShortestPathOracle(object):
                    (loc.rel_elevation < -math.pi/6.0 and ob['viewIndex'] // 12 > 0):
                     continue
                 else:
+                    # print("within 30 deg")
                     return (i, 0, 0)
 
+        # NOTE: added the following to solve a bug.
+        # Mask invalid forward action.
+        if len(ob['navigableLocations']) <= 1:
+            return (0, 0, 0)
+
         # Otherwise, take action 1.
+        # print("otherwise, take action 1")
         return (1, 0, 0)
 
     def __call__(self, obs):
@@ -315,6 +325,7 @@ class MultistepShortestPathOracle(ShortestPathOracle):
         assert not ob['ended']
 
         for _ in range(self.n_steps):
+            # print("inside _shortest_path_actions: " + str(ii))
             # Query oracle for next action
             action = self._shortest_path_action(ob)
             # Convert to agent action
@@ -328,7 +339,11 @@ class MultistepShortestPathOracle(ShortestPathOracle):
             if action == (0, 0, 0) and not ob['reached_first_goal']:
                 ob['reached_first_goal'] = True
                 ob['goal_viewpoints'] = ob['second_goal_viewpoints']
+                # print("Changed to second_goal_viewpoints. ob now is: ")
+                # print(ob)
             elif action == (0, 0, 0) and ob['reached_first_goal']:
+                # print("Reached second goal. ob now is: ")
+                # print(ob)
                 break
 
             state = self.sim.getState()
@@ -343,13 +358,13 @@ class MultistepShortestPathOracle(ShortestPathOracle):
             #         'goal_viewpoints': ob['goal_viewpoints'],
             #         'scan'     : ob['scan']
             #     }
-            ob['viewpoint'] = state.location.viewpointId,
-            ob['viewIndex'] = state.viewIndex,
-            ob['heading'] = state.heading,
-            ob['elevation'] = state.elevation,
-            ob['navigableLocations'] = state.navigableLocations,
-            ob['point'] = state.location.point,
-            ob['ended'] = ob['ended'] or (action == (0, 0, 0) and ob['reached_first_goal']),
+            ob['viewpoint'] = state.location.viewpointId
+            ob['viewIndex'] = state.viewIndex
+            ob['heading'] = state.heading
+            ob['elevation'] = state.elevation
+            ob['navigableLocations'] = state.navigableLocations
+            ob['point'] = state.location.point
+            ob['ended'] = ob['ended'] or (action == (0, 0, 0) and ob['reached_first_goal'])
 
         return actions
 

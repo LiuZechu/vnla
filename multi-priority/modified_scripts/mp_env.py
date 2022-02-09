@@ -71,6 +71,10 @@ class EnvBatch():
 
     def makeActions(self, actions):
         for i, (index, heading, elevation) in enumerate(actions):
+            # print("i: " + str(i))
+            # print("index: " + str(index))
+            # print("heading: " + str(heading))
+            # print("elevation: " + str(elevation))
             self.sims[i].makeAction(index, heading, elevation)
 
 
@@ -130,7 +134,7 @@ class VNLABatch():
     def load_data(self, data):
         self.data = []
         self.scans = set()
-        for index, item in enumerate(data):
+        for item in data:
             self.scans.add(item['scan'])
 
             # NOTE: `trajectories` info is absent in new multipri dataset
@@ -145,7 +149,6 @@ class VNLABatch():
             #     new_item['instruction'] = instr
             #     self.data.append(new_item)            
             new_item = dict(item)
-            new_item['instr_id'] = str(index)
             self.data.append(new_item)
 
         self.reset_epoch()
@@ -157,6 +160,7 @@ class VNLABatch():
     def _next_minibatch(self):
         if self.ix == 0:
             self.random.shuffle(self.data)
+        # self.ix += self.batch_size * 3 # NOTE: ADDED THIS LINE FOR DEBUGGING!
         batch = self.data[self.ix:self.ix+self.batch_size]
         if len(batch) < self.batch_size:
             self.random.shuffle(self.data)
@@ -217,6 +221,7 @@ class VNLABatch():
         scanIds = [item['scan'] for item in self.batch]
         # NOTE: changed here
         # these are the `start_viewpoint`s
+        # print("RESET!")
         viewpointIds = [item['start_viewpoint'] for item in self.batch]
         headings = [item['initial_heading'] for item in self.batch]
         self.instructions = [item['instruction'] for item in self.batch]
