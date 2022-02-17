@@ -136,6 +136,11 @@ class ShortestPathOracle(object):
             # print("map to sim's action space; not forward.")
             return self.env_nav_actions[action_idx]
 
+        # NOTE: added the following to solve a bug.
+        # Mask invalid forward action.
+        if len(ob['navigableLocations']) <= 1:
+            return (0, 0, 0)
+
         scan = ob['scan']
         start_point = ob['viewpoint']
 
@@ -163,11 +168,6 @@ class ShortestPathOracle(object):
                 else:
                     # print("within 30 deg")
                     return (i, 0, 0)
-
-        # NOTE: added the following to solve a bug.
-        # Mask invalid forward action.
-        if len(ob['navigableLocations']) <= 1:
-            return (0, 0, 0)
 
         # Otherwise, take action 1.
         # print("otherwise, take action 1")
