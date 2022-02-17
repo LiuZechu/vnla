@@ -73,6 +73,6 @@ class BaseAgent(object):
 
     def add_is_success(self, is_success):
         for k, v in is_success:
-            self.results[k]['is_success'] = v
+            self.results[int(k)]['is_success'] = v
 
 

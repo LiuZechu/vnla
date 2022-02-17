@@ -85,6 +85,15 @@ class Evaluation(object):
         #     nav_errors = min(nav_errors, self.distances[scan][final_pos][goal])
         #     oracle_errors = min(oracle_errors, self.distances[scan][nearest_pos][goal])
 
+        # Added this to calculate nav_errors and oracle_errors
+        start = gt['start_viewpoint']
+        assert start == path[0][0], 'Result trajectories should include the start position' 
+        final_pos = path[-1][0]
+        for goal in gt['second_goal_viewpoints']:
+            nearest_pos = self._get_nearest(scan, goal, path)
+            nav_errors = min(nav_errors, self.distances[scan][final_pos][goal])
+            oracle_errors = min(oracle_errors, self.distances[scan][nearest_pos][goal])
+
         self.scores['nav_errors'].append(nav_errors)
         self.scores['oracle_errors'].append(oracle_errors)
         distance = 0
@@ -126,9 +135,9 @@ class Evaluation(object):
                 if str(item['instr_id']) in instr_ids:
                     instr_ids.remove(str(item['instr_id']))
                     self._score_item(str(item['instr_id']), item['trajectory'])
-        # assert len(instr_ids) == 0, 'Missing %d of %d instruction ids from %s - not in %s'\
-        #               % (len(instr_ids), len(self.instr_ids), ",".join(self.splits), output_file)
-        # assert len(self.scores['nav_errors']) == len(self.instr_ids)
+        assert len(instr_ids) == 0, 'Missing %d of %d instruction ids from %s - not in %s'\
+                       % (len(instr_ids), len(self.instr_ids), ",".join(self.splits), output_file)
+        assert len(self.scores['nav_errors']) == len(self.instr_ids)
         score_summary = {
             'nav_error': np.average(self.scores['nav_errors']),
             'oracle_error': np.average(self.scores['oracle_errors']),

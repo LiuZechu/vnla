@@ -53,7 +53,6 @@ class ShortestPathOracle(object):
         best_point = None
 
         for end_point in end_points:
-            graph = utils.load_nav_graphs(scan, path=None)
             d = self.distances[scan][start_point][end_point]
             if d < best_d:
                 best_d = d
