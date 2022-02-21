@@ -173,6 +173,30 @@ class Evaluation(object):
         num_second_successes = len([d for d in self.scores['second_nav_errors'] if self.check_success(d)])
         score_summary['first_success_rate'] = float(num_first_successes)/float(len(self.scores['first_nav_errors']))
         score_summary['second_success_rate'] = float(num_second_successes)/float(len(self.scores['second_nav_errors']))
+        
+        # Add in "first_succeed_second_fail_rate", "first_fail_second_succeed_rate", "both_succeed_rate",
+        # and "both_fail_rate"
+        first_succeed_second_fail_num = 0
+        first_fail_second_succeed_num = 0
+        both_succeed_num = 0
+        both_fail_num = 0
+        total_num = len(self.scores['first_nav_errors'])
+        for i in range(len(total_num)):
+            is_first_succeed = self.check_success(self.scores['first_nav_errors'][i])
+            is_second_succeed = self.check_success(self.scores['second_nav_errors'][i])
+            if is_first_succeed and not is_second_succeed:
+                first_succeed_second_fail_num += 1
+            elif not is_first_succeed and is_second_succeed:
+                first_fail_second_succeed_num += 1
+            elif is_first_succeed and is_second_succeed:
+                both_succeed_num += 1
+            elif not is_first_succeed and not is_second_succeed:
+                both_fail_num += 1
+        score_summary['first_succeed_second_fail_rate'] = float(first_succeed_second_fail_num)/float(total_num)
+        score_summary['first_fail_second_succeed_rate'] = float(first_fail_second_succeed_num)/float(total_num)
+        score_summary['both_succeed_rate'] = float(both_succeed_num)/float(total_num)
+        score_summary['both_fail_rate'] = float(both_fail_num)/float(total_num)
+        
         oracle_successes = len([d for d in self.scores['oracle_errors'] if self.check_success(d)])
         score_summary['oracle_rate'] = float(oracle_successes)/float(len(self.scores['oracle_errors']))
         if not self.no_room:
