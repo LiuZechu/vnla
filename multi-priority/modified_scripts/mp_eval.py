@@ -181,7 +181,7 @@ class Evaluation(object):
         both_succeed_num = 0
         both_fail_num = 0
         total_num = len(self.scores['first_nav_errors'])
-        for i in range(len(total_num)):
+        for i in range(total_num):
             is_first_succeed = self.check_success(self.scores['first_nav_errors'][i])
             is_second_succeed = self.check_success(self.scores['second_nav_errors'][i])
             if is_first_succeed and not is_second_succeed:
