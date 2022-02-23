@@ -211,7 +211,7 @@ class AskOracle(object):
         agent_decision = int(np.argmax(ob['nav_dist']))
         _, nearest_first_or_second_goal = \
             nav_oracle._find_nearest_point(scan, current_point, ob['first_goal_viewpoints'] + ob['second_goal_viewpoints'])
-        d = self.distances[scan][current_point][nearest_first_or_second_goal]
+        d, _ = nav_oracle._find_nearest_point(scan, current_point, [nearest_first_or_second_goal])
         if d <= self.success_radius:
             return self.ASK, 'arrive'
 
@@ -268,7 +268,7 @@ class AskOracle(object):
         #    agent_decision == nav_oracle.agent_nav_actions.index('forward'):
         _, nearest_first_or_second_goal = \
             nav_oracle._find_nearest_point(scan, current_point, ob['first_goal_viewpoints'] + ob['second_goal_viewpoints'])
-        d = self.distances[scan][current_point][nearest_first_or_second_goal]
+        d, _ = nav_oracle._find_nearest_point(scan, current_point, [nearest_first_or_second_goal])
         if d <= self.success_radius:
             return self.ASK, 'arrive'
 
