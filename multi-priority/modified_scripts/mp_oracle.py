@@ -124,7 +124,7 @@ class ShortestPathOracle(object):
             return self.agent_nav_actions.index('down')
         if ix > 0:
             return self.agent_nav_actions.index('forward')
-        if ob['ended']:
+        if ob['ended'] or not ob['reached_first_goal']:
             return self.agent_nav_actions.index('<ignore>')
         return self.agent_nav_actions.index('<end>')
 
@@ -189,6 +189,7 @@ class AskOracle(object):
         self.uncertain_threshold = hparams.uncertain_threshold
         self.unmoved_threshold = hparams.unmoved_threshold
         self.agent_ask_actions = agent_ask_actions
+        self.success_radius = hparams.success_radius
 
         self.rule_a_e = hasattr(hparams, 'rule_a_e') and hparams.rule_a_e
         self.rule_b_d = hasattr(hparams, 'rule_b_d') and hparams.rule_b_d
@@ -202,9 +203,16 @@ class AskOracle(object):
         current_point = ob['viewpoint']
         _, goal_point = nav_oracle._find_nearest_point(scan, current_point, ob['goal_viewpoints'])
 
+        # agent_decision = int(np.argmax(ob['nav_dist']))
+        # if current_point == goal_point and \
+        #    agent_decision == nav_oracle.agent_nav_actions.index('forward'):
+        #     return self.ASK, 'arrive'
+        # NOTE: this will be changed to if the agent is near any of the goals
         agent_decision = int(np.argmax(ob['nav_dist']))
-        if current_point == goal_point and \
-           agent_decision == nav_oracle.agent_nav_actions.index('forward'):
+        _, nearest_first_or_second_goal = \
+            nav_oracle._find_nearest_point(scan, current_point, ob['first_goal_viewpoints'] + ob['second_goal_viewpoints'])
+        d = self.distances[scan][current_point][nearest_first_or_second_goal]
+        if d <= self.success_radius:
             return self.ASK, 'arrive'
 
         start_point = ob['init_viewpoint']
@@ -254,9 +262,14 @@ class AskOracle(object):
 
         # Rule (e): ask if the goal has been reached but the agent decides to
         # go forward
+        # NOTE: this will be changed to if the agent is near any of the goals
         agent_decision = int(np.argmax(ob['nav_dist']))
-        if current_point == goal_point and \
-           agent_decision == nav_oracle.agent_nav_actions.index('forward'):
+        # if current_point == goal_point and \
+        #    agent_decision == nav_oracle.agent_nav_actions.index('forward'):
+        _, nearest_first_or_second_goal = \
+            nav_oracle._find_nearest_point(scan, current_point, ob['first_goal_viewpoints'] + ob['second_goal_viewpoints'])
+        d = self.distances[scan][current_point][nearest_first_or_second_goal]
+        if d <= self.success_radius:
             return self.ASK, 'arrive'
 
         start_point = ob['init_viewpoint']

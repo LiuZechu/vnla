@@ -196,7 +196,7 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
                     'both_succeed_rate', 'both_fail_rate', 'both_succeed_steps',
                     'first_nav_error', 'second_nav_error', 'length', 'steps']:
                     metrics[metric][env_name] = (val, len(traj))
-                if metric in ['first_success_rate', 'second_success_rate', 
+                if metric in ['first_success_rate', 'second_success_rate', 'steps',
                     'oracle_rate', 'first_room_success_rate', 'second_room_success_rate']:
                     loss_str += ', %s: %.3f' % (metric, val)
 
