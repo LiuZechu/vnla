@@ -192,6 +192,8 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
             for metric, val in score_summary.items():
                 if metric in ['first_success_rate', 'second_success_rate', 'oracle_rate', 
                     'first_room_success_rate', 'second_room_success_rate',
+                    'first_succeed_second_fail_rate', 'first_fail_second_succeed_rate',
+                    'both_succeed_rate', 'both_fail_rate', 'both_succeed_steps',
                     'first_nav_error', 'second_nav_error', 'length', 'steps']:
                     metrics[metric][env_name] = (val, len(traj))
                 if metric in ['first_success_rate', 'second_success_rate', 

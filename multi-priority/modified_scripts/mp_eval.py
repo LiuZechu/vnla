@@ -179,6 +179,7 @@ class Evaluation(object):
         first_succeed_second_fail_num = 0
         first_fail_second_succeed_num = 0
         both_succeed_num = 0
+        both_succeed_steps = 0 # To calculate average steps for fully successful tasks
         both_fail_num = 0
         total_num = len(self.scores['first_nav_errors'])
         for i in range(total_num):
@@ -190,11 +191,13 @@ class Evaluation(object):
                 first_fail_second_succeed_num += 1
             elif is_first_succeed and is_second_succeed:
                 both_succeed_num += 1
+                both_succeed_steps += self.scores['trajectory_steps'][i]
             elif not is_first_succeed and not is_second_succeed:
                 both_fail_num += 1
         score_summary['first_succeed_second_fail_rate'] = float(first_succeed_second_fail_num)/float(total_num)
         score_summary['first_fail_second_succeed_rate'] = float(first_fail_second_succeed_num)/float(total_num)
         score_summary['both_succeed_rate'] = float(both_succeed_num)/float(total_num)
+        score_summary['both_succeed_steps'] = float(both_succeed_steps)/float(both_succeed_num)
         score_summary['both_fail_rate'] = float(both_fail_num)/float(total_num)
         
         oracle_successes = len([d for d in self.scores['oracle_errors'] if self.check_success(d)])
