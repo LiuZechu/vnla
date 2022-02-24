@@ -134,7 +134,7 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
     test_feedback  = { 'nav' : 'argmax', 'ask' : 'argmax' }
 
     start = time.time()
-    sr = 'success_rate'
+    sr = 'second_success_rate'
 
 
     for idx in range(start_iter, end_iter, hparams.log_every):
