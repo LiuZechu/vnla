@@ -1,21 +1,12 @@
 import json
 import random
 
-import os
-import math
 import networkx as nx
-import functools
-import scipy.stats
 import random
 import sys
-import copy
-import numpy as np
-
-import torch
 
 import utils
 sys.path.append('../../build')
-import MatterSim
 
 '''
 This file generates a multi-priority dataset from the original VNLA dataset.
@@ -82,6 +73,15 @@ def combine_instructions(instruction1, instruction2):
 
   return result
 
+# Ensure the task has a path whose length is within the specified limits
+# `single_min` is the minimum length for a single task;
+# `single_max` is the maximum length for a single task;
+# The overall min/max for a task will be `single_min` * 2 and `single_max` * 2
+def check_task_path(path, single_min=5, single_max=25):
+  path_length = len(path) - 1
+  is_valid = (path_length >= single_min) and (path_length <= single_max)
+  return is_valid
+
 # Combine two tasks in the same house from original VNLA into a new task with two priorities
 def combine_two_tasks(task1, task2, path_calculator):
   assert task1['scan'] == task2['scan'], "Tasks 1 and 2 are from different houses."
@@ -113,30 +113,38 @@ def combine_two_tasks(task1, task2, path_calculator):
     second_goal_viewpoints.append(path[-1])
   new_task['second_goal_viewpoints'] = second_goal_viewpoints
 
-  # Add paths
+  # Add valid paths whose lengths are within acceptable range
   paths = []
   scan = new_task['scan']
   start = new_task['start_viewpoint']
+  is_valid = True
   for first_goal in first_goal_viewpoints:
     first_leg = path_calculator.paths[scan][start][first_goal]
+    if not check_task_path(first_leg) or not is_valid:
+      is_valid = False
+      break
     for second_goal in second_goal_viewpoints:
       second_leg = path_calculator.paths[scan][first_goal][second_goal]
+      if not check_task_path(second_leg):
+        is_valid = False
+        break
       path = first_leg + second_leg[1:]
       paths.append(path)
   new_task['paths'] = paths
 
-  return new_task
+  return new_task, is_valid
 
 # Take in original tasks from the same house and output a list of new tasks
-# `limit` indicates the max number of resultant data points. Default is 3k but can be increased to ~4k.
+# `limit` indicates the max number of resultant data points. Default is 3k but can be increased to ~5k.
 def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
   results = []
   counter = 0
   for i in range(len(tasks) - 1):
     for j in range(i + 1, len(tasks)):
-      new_task = combine_two_tasks(tasks[i], tasks[j], path_calculator)
-      results.append(new_task)
-      counter += 1
+      new_task, is_new_task_valid = combine_two_tasks(tasks[i], tasks[j], path_calculator)
+      if is_new_task_valid:
+        results.append(new_task)
+        counter += 1
       if counter >= limit:
         return results
   return results
