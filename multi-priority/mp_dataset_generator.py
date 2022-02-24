@@ -71,7 +71,7 @@ def generate_tasks_from_same_house(tasks, limit=3000):
 
 def main():
   # Step One: group tasks in the same house (identified by `scan`)
-  json_filename = './asknav_train.json' # mock file instead of the actual file
+  json_filename = './ori_asknav_test_unseen.json'
   tasks_by_house = group_tasks_by_house(json_filename) # `scan` -> list of tasks
 
   # Step Two: construct a task from every pair of tasks from the same house/scan
@@ -83,8 +83,9 @@ def main():
 
   # Step Three: randomise ordering of new tasks and write to new file
   random.shuffle(all_new_tasks)
+  all_new_tasks = all_new_tasks[:5000] # NOTE: added this line to restrict size of val/test sets
   print(f'There are {len(all_new_tasks)} tasks in total.')
-  with open('multipri_asknav_train.json', 'w') as result_file:
+  with open('multipri_asknav_test_unseen.json', 'w') as result_file:
     json.dump(all_new_tasks, result_file, indent=4, sort_keys=True)
 
 
