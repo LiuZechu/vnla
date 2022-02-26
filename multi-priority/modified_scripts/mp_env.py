@@ -71,10 +71,6 @@ class EnvBatch():
 
     def makeActions(self, actions):
         for i, (index, heading, elevation) in enumerate(actions):
-            # print("i: " + str(i))
-            # print("index: " + str(index))
-            # print("heading: " + str(heading))
-            # print("elevation: " + str(elevation))
             self.sims[i].makeAction(index, heading, elevation)
 
 
@@ -119,12 +115,12 @@ class VNLABatch():
                 else:
                     self.traj_len_estimates[k] = self.max_episode_length
 
-    # def make_traj_estimate_key(self, item):
-    #     if self.no_room:
-    #         key = (item['start_region_name'], item['object_name']) # NOTE: haven't changed for no_room
-    #     else:
-    #         key = (item['start_region_name'], item['end_region_name'])
-    #     return key
+    def make_traj_estimate_key(self, item):
+        if self.no_room:
+            key = (item['start_region_name'], item['object_name']) # NOTE: haven't changed for no_room
+        else:
+            key = (item['start_region_name'], item['first_end_region_name'], item['second_end_region_name'])
+        return key
 
     def encode(self, instr):
         if self.tokenizer is None:
@@ -137,10 +133,9 @@ class VNLABatch():
         for item in data:
             self.scans.add(item['scan'])
 
-            # NOTE: `trajectories` info is absent in new multipri dataset
-            # key = self.make_traj_estimate_key(item)
-            # self.traj_len_estimates[key].extend(
-            #     len(t) for t in item['trajectories'])
+            key = self.make_traj_estimate_key(item)
+            self.traj_len_estimates[key].extend(
+                len(t) for t in item['trajectories'])
 
             # for j,instr in enumerate(item['instructions']):
             #     new_item = dict(item)
@@ -232,16 +227,15 @@ class VNLABatch():
 
         for i, item in enumerate(self.batch):
             # Assign time budget
-            # if is_eval:
-            #     # If eval use expected trajectory length between start_region and end_region
-            #     key = self.make_traj_estimate_key(item)
-            #     traj_len_estimate = self.traj_len_estimates[key]
-            # else:
-            #     # If train use average oracle trajectory length
-            #     traj_len_estimate = sum(len(t)
-            #         for t in item['trajectories']) / len(item['trajectories'])
+            if is_eval:
+                # If eval use expected trajectory length between start_region, first_end_region and second_end_region
+                key = self.make_traj_estimate_key(item)
+                traj_len_estimate = self.traj_len_estimates[key]
+            else:
+                # If train use average oracle trajectory length
+                traj_len_estimate = sum(len(t)
+                    for t in item['trajectories']) / len(item['trajectories'])
 
-            traj_len_estimate = 50 # NOTE: this is hardcoded for now
             self.traj_lens[i] = min(self.max_episode_length, int(round(traj_len_estimate)))
 
             # Assign help-requesting budget
