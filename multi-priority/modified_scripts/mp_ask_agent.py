@@ -378,8 +378,8 @@ class AskAgent(BaseAgent):
 
         last_traj = []
         for iter in range(1, n_iters + 1):
-            # print("n_iters: " + str(n_iters))
-            # print("current iter: " + str(iter)) 
+            print("n_iters: " + str(n_iters))
+            print("current iter: " + str(iter)) 
             optimizer.zero_grad()
             traj = self.rollout()
             if n_iters - iter <= 10:

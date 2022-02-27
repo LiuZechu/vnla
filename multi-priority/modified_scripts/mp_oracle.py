@@ -339,7 +339,6 @@ class MultistepShortestPathOracle(ShortestPathOracle):
         assert not ob['ended']
 
         for _ in range(self.n_steps):
-            # print("inside _shortest_path_actions: " + str(ii))
             # Query oracle for next action
             action = self._shortest_path_action(ob)
             # Convert to agent action
@@ -350,14 +349,16 @@ class MultistepShortestPathOracle(ShortestPathOracle):
 
             # if action == (0, 0, 0):
             #     break
+
+            reached_first_goal = ob['reached_first_goal']
             if action == (0, 0, 0) and not ob['reached_first_goal']:
                 ob['reached_first_goal'] = True
                 ob['goal_viewpoints'] = ob['second_goal_viewpoints']
                 print("Changed to second_goal_viewpoints. ob now is: ")
-                print(ob)
+                # print(ob)
             elif action == (0, 0, 0) and ob['reached_first_goal']:
                 print("Reached second goal. ob now is: ")
-                print(ob)
+                # print(ob)
                 break
 
             state = self.sim.getState()
@@ -378,7 +379,7 @@ class MultistepShortestPathOracle(ShortestPathOracle):
             ob['elevation'] = state.elevation
             ob['navigableLocations'] = state.navigableLocations
             ob['point'] = state.location.point
-            ob['ended'] = ob['ended'] or (action == (0, 0, 0) and ob['reached_first_goal'])
+            ob['ended'] = ob['ended'] or (action == (0, 0, 0) and reached_first_goal) # Problem is here!
 
         return actions
 
