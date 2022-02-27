@@ -60,62 +60,62 @@ class PathCalculator(object):
     return graph, paths, distances
 
   def _find_nearest_point(self, scan, start_point, end_points):
-    best_d = 1e9
-    best_point = None
+      best_d = 1e9
+      best_point = None
 
-    for end_point in end_points:
-      d = self.distances[scan][start_point][end_point]
-      if d < best_d:
-        best_d = d
-        best_point = end_point
-    return best_d, best_point
+      for end_point in end_points:
+          d = self.distances[scan][start_point][end_point]
+          if d < best_d:
+              best_d = d
+              best_point = end_point
+      return best_d, best_point
 
   def _shortest_path_action(self, ob):
-    ''' Determine next action on the shortest path to goals. '''
+      ''' Determine next action on the shortest path to goals. '''
 
-    scan = ob['scan']
-    start_point = ob['viewpoint']
+      scan = ob['scan']
+      start_point = ob['viewpoint']
 
-    # Find nearest goal
-    _, goal_point = self._find_nearest_point(scan, start_point, ob['goal_viewpoints'])
+      # Find nearest goal
+      _, goal_point = self._find_nearest_point(scan, start_point, ob['goal_viewpoints'])
 
-    # Stop if a goal is reached
-    if start_point == goal_point:
-      return (0, 0, 0)
+      # Stop if a goal is reached
+      if start_point == goal_point:
+          return (0, 0, 0)
 
-    path = self.paths[scan][start_point][goal_point]
-    next_point = path[1]
+      path = self.paths[scan][start_point][goal_point]
+      next_point = path[1]
 
-    # Can we see the next viewpoint?
-    for i, loc in enumerate(ob['navigableLocations']):
-      if loc.viewpointId == next_point:
-        # Look directly at the viewpoint before moving
-        if loc.rel_heading > math.pi/6.0:
-          return (0, 1, 0) # Turn right
-        elif loc.rel_heading < -math.pi/6.0:
-          return (0,-1, 0) # Turn left
-        elif loc.rel_elevation > math.pi/6.0 and ob['viewIndex'] // 12 < 2:
-          return (0, 0, 1) # Look up
-        elif loc.rel_elevation < -math.pi/6.0 and ob['viewIndex'] // 12 > 0:
-          return (0, 0,-1) # Look down
-        else:
-          return (i, 0, 0) # Move
+      # Can we see the next viewpoint?
+      for i, loc in enumerate(ob['navigableLocations']):
+          if loc.viewpointId == next_point:
+              # Look directly at the viewpoint before moving
+              if loc.rel_heading > math.pi/6.0:
+                    return (0, 1, 0) # Turn right
+              elif loc.rel_heading < -math.pi/6.0:
+                    return (0,-1, 0) # Turn left
+              elif loc.rel_elevation > math.pi/6.0 and ob['viewIndex'] // 12 < 2:
+                    return (0, 0, 1) # Look up
+              elif loc.rel_elevation < -math.pi/6.0 and ob['viewIndex'] // 12 > 0:
+                    return (0, 0,-1) # Look down
+              else:
+                    return (i, 0, 0) # Move
 
       # Can't see it - first neutralize camera elevation
       if ob['viewIndex'] // 12 == 0:
-        return (0, 0, 1) # Look up
+          return (0, 0, 1) # Look up
       elif ob['viewIndex'] // 12 == 2:
-        return (0, 0,-1) # Look down
+          return (0, 0,-1) # Look down
 
       # Otherwise decide which way to turn
       target_rel = self.graph[ob['scan']].nodes[next_point]['position'] - ob['point']
       target_heading = math.pi / 2.0 - math.atan2(target_rel[1], target_rel[0])
       if target_heading < 0:
-        target_heading += 2.0 * math.pi
+          target_heading += 2.0 * math.pi
       if ob['heading'] > target_heading and ob['heading'] - target_heading < math.pi:
-        return (0, -1, 0) # Turn left
+          return (0, -1, 0) # Turn left
       if target_heading > ob['heading'] and target_heading - ob['heading'] > math.pi:
-        return (0, -1, 0) # Turn left
+          return (0, -1, 0) # Turn left
 
       return (0, 1, 0) # Turn right
 
@@ -139,6 +139,7 @@ class PathCalculator(object):
       # Record action
       actions.append(list(action))
 
+      reached_first_goal = ob['reached_first_goal']
       if action == (0, 0, 0) and not ob['reached_first_goal']:
           ob['reached_first_goal'] = True
           ob['goal_viewpoints'] = ob['second_goal_viewpoints']
@@ -153,44 +154,45 @@ class PathCalculator(object):
       ob['elevation'] = state.elevation
       ob['navigableLocations'] = state.navigableLocations
       ob['point'] = state.location.point
-      ob['ended'] = ob['ended'] or (action == (0, 0, 0) and ob['reached_first_goal'])
+      ob['ended'] = ob['ended'] or (action == (0, 0, 0) and reached_first_goal) # Problem is here!
 
     return actions
 
-def simulate(self, datapoint):
-  # Start simulator
-  scanId = datapoint['scan']
-  viewpointId = datapoint['start_viewpoint']
-  heading = datapoint['initial_heading']
+  def simulate(self, datapoint):
+    # Start simulator
+    scanId = datapoint['scan']
+    viewpointId = datapoint['start_viewpoint']
+    heading = datapoint['initial_heading']
 
-  self.init_sim()
-  self.sim.newEpisodes(scanId, viewpointId, heading, 0)
+    self.init_sim()
+    self.sim.newEpisode(scanId, viewpointId, heading, 0)
 
-  # Get obs
-  state = self.sim.getState()
-  ob = {
-    'instr_id' : datapoint['instr_id'],
-    'scan' : state.scanId,
-    'point': state.location.point,
-    'viewpoint' : state.location.viewpointId,
-    'viewIndex' : state.viewIndex,
-    'heading' : state.heading,
-    'elevation' : state.elevation,
-    # 'feature' : feature,
-    'step' : state.step,
-    'navigableLocations' : state.navigableLocations,
-    'instruction' : self.instructions[i],
-    'goal_viewpoints': datapoint['first_goal_viewpoints'],
-    'first_goal_viewpoints' : datapoint['first_goal_viewpoints'],
-    'second_goal_viewpoints' : datapoint['second_goal_viewpoints'],
-    'init_viewpoint' : datapoint['start_viewpoint'],
-    'reached_first_goal': False
-  }
+    # Get obs
+    state = self.sim.getState()
+    ob = {
+      'instr_id' : datapoint['instr_id'],
+      'scan' : state.scanId,
+      'point': state.location.point,
+      'viewpoint' : state.location.viewpointId,
+      'viewIndex' : state.viewIndex,
+      'heading' : state.heading,
+      'elevation' : state.elevation,
+      # 'feature' : feature,
+      'step' : state.step,
+      'navigableLocations' : state.navigableLocations,
+      # 'instruction' : self.instructions[i],
+      'goal_viewpoints': datapoint['first_goal_viewpoints'],
+      'first_goal_viewpoints' : datapoint['first_goal_viewpoints'],
+      'second_goal_viewpoints' : datapoint['second_goal_viewpoints'],
+      'init_viewpoint' : datapoint['start_viewpoint'],
+      'reached_first_goal': False,
+      'ended': False
+    }
 
-  # Start simulation
-  actions = self._shortest_path_actions(ob)
+    # Start simulation
+    actions = self._shortest_path_actions(ob)
 
-  return actions
+    return actions
 
 ############################################################################
 
@@ -232,16 +234,21 @@ def combine_instructions(instruction1, instruction2):
 # `single_min` is the minimum length for a single task;
 # `single_max` is the maximum length for a single task;
 # The overall min/max for a task will be `single_min` * 2 and `single_max` * 2
-def generate_task_trajectory(task, first_goal, second_goal, path_calculator, single_min=5, single_max=25):
+def generate_task_trajectory(datapoint, first_goal, second_goal, path_calculator, single_min=5, single_max=25):
   # Limit to goal viewpoints to one so as to generate a trajectory
   # for every combination of first+second goals
+  task = datapoint.copy()
   task['first_goal_viewpoints'] = [first_goal]
   task['second_goal_viewpoints'] = [second_goal]
   trajectory = path_calculator.simulate(task)
 
-  is_valid = (len(trajectory) >= single_min) and (len(trajectory) <= single_max)
+  is_valid = (len(trajectory) - 1 >= single_min * 2) and (len(trajectory) - 1 <= single_max * 2)
 
   return trajectory, is_valid
+
+# Ensure path is above minimum; which is set at 3
+def check_path_validity(path, single_min=3):
+  return len(path) >= single_min
 
 # Combine two tasks in the same house from original VNLA into a new task with two priorities
 def combine_two_tasks(task1, task2, path_calculator):
@@ -287,7 +294,8 @@ def combine_two_tasks(task1, task2, path_calculator):
     for second_goal in second_goal_viewpoints:
       second_leg = path_calculator.paths[scan][first_goal][second_goal]
       trajectory, is_traj_valid = generate_task_trajectory(new_task, first_goal, second_goal, path_calculator)
-      if not is_traj_valid:
+      is_path_valid = check_path_validity(first_leg) and check_path_validity(second_leg)
+      if not (is_traj_valid and is_path_valid):
         is_valid = False
         break
       path = first_leg + second_leg[1:]
@@ -304,9 +312,15 @@ def combine_two_tasks(task1, task2, path_calculator):
 def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
   results = []
   counter = 0
+  num_invalid = 0
   for i in range(len(tasks) - 1):
     for j in range(i + 1, len(tasks)):
       new_task, is_new_task_valid = combine_two_tasks(tasks[i], tasks[j], path_calculator)
+      if counter % 500 == 0:
+        print("counter: ", counter)
+        print("invalid: ", num_invalid)
+      if not is_new_task_valid:
+        num_invalid += 1
       if is_new_task_valid:
         results.append(new_task)
         counter += 1
@@ -364,7 +378,7 @@ def setup(filename):
 def main():
 
   # Step One: group tasks in the same house (identified by `scan`)
-  json_filename = './original_datasets/ori_asknav_test_unseen.json' # CHANGE HERE
+  json_filename = './original_datasets/ori_asknav_val_seen.json' # CHANGE HERE
   tasks_by_house = group_tasks_by_house(json_filename) # `scan` -> list of tasks
 
   # Step 1.5: set up PathCalculator
@@ -381,7 +395,7 @@ def main():
   random.shuffle(all_new_tasks)
   all_new_tasks = all_new_tasks[:5000] # NOTE: CHANGE HERE; added this line to restrict size of val/test sets
   print_tasks_stats(all_new_tasks)
-  with open('./datasets/multipri_asknav_test_unseen.json', 'w') as result_file: # CHANGE HERE
+  with open('./datasets/multipri_asknav_val_seen.json', 'w') as result_file: # CHANGE HERE
     json.dump(all_new_tasks, result_file, indent=4, sort_keys=True)
 
 
