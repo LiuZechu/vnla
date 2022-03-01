@@ -172,10 +172,16 @@ class VNLABatch():
     def reset_epoch(self):
         self.ix = 0
 
-    def _get_obs(self):
+    def _get_obs(self, prev_obs=None):
         obs = []
         for i, (feature, state) in enumerate(self.env.getStates()):
             item = self.batch[i]
+            # NOTE: changed here
+            goal_viewpoints = item['first_goal_viewpoints']
+            reached_first_goal = False
+            if prev_obs is not None:
+                goal_viewpoints = prev_obs[i]['goal_viewpoints']
+                reached_first_goal = prev_obs[i]['reached_first_goal']
             obs.append({
                 'instr_id' : item['instr_id'],
                 'scan' : state.scanId,
@@ -188,11 +194,11 @@ class VNLABatch():
                 'step' : state.step,
                 'navigableLocations' : state.navigableLocations,
                 'instruction' : self.instructions[i],
-                'goal_viewpoints': item['first_goal_viewpoints'], # NOTE: change this to second_goal_viewpoints after reaching 
+                'goal_viewpoints': goal_viewpoints, # NOTE: change this to second_goal_viewpoints after reaching 
                 'first_goal_viewpoints' : item['first_goal_viewpoints'], # NOTE: changed here
                 'second_goal_viewpoints' : item['second_goal_viewpoints'], # NOTE: changed here
                 'init_viewpoint' : item['start_viewpoint'], # NOTE: changed here
-                'reached_first_goal': False # NOTE: changed here
+                'reached_first_goal': reached_first_goal # NOTE: changed here
             })
             obs[-1]['max_queries'] = self.max_queries_constraints[i]
             obs[-1]['traj_len'] = self.traj_lens[i]
@@ -244,16 +250,16 @@ class VNLABatch():
 
         return self._get_obs()
 
-    def step(self, actions):
+    def step(self, actions, prev_obs):
         self.env.makeActions(actions)
-        return self._get_obs()
+        return self._get_obs(prev_obs)
 
     def prepend_instruction(self, idx, instr):
         ''' Prepend subgoal to end-goal. '''
 
         self.instructions[idx] = instr + ' . ' + self.batch[idx]['instruction']
 
-    def get_obs(self):
-        return self._get_obs()
+    def get_obs(self, prev_obs):
+        return self._get_obs(prev_obs)
 
 

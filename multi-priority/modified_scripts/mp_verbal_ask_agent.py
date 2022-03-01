@@ -171,7 +171,7 @@ class VerbalAskAgent(AskAgent):
 
             if has_asked:
                 # Update observations
-                obs = self.env.get_obs()
+                obs = self.env.get_obs(obs)
                 # Make new batch with new instructions
                 seq, seq_mask, seq_lengths = self._make_batch(obs)
                 # Re-encode with new instructions
@@ -222,7 +222,7 @@ class VerbalAskAgent(AskAgent):
             # Take nav action
             # print("env_action: ")
             # print(env_action)
-            obs = self.env.step(env_action)
+            obs = self.env.step(env_action, obs)
 
             # Save trajectory output
             ask_target_list = ask_target.data.tolist()

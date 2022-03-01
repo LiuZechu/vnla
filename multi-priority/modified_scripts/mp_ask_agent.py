@@ -300,7 +300,7 @@ class AskAgent(BaseAgent):
             q_t = torch.tensor(q_t_list, dtype=torch.long, device=self.device)
 
             # Execute nav actions
-            obs = self.env.step(env_action)
+            obs = self.env.step(env_action, obs)
 
             # Update history
             ask_target_list = ask_target.data.tolist()
