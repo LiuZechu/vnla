@@ -252,7 +252,24 @@ class VNLABatch():
 
     def step(self, actions, prev_obs):
         self.env.makeActions(actions)
-        return self._get_obs(prev_obs)
+        # NOTE: changed here
+        obs = self._get_obs(prev_obs)
+        # Change `goal_viewpoints` and `reached_first_goal` after reaching first goal
+        for i in range(len(obs)):
+            ob = obs[i]
+            current_viewpoint = ob['viewpoint']
+            first_goal_viewpoints = ob['first_goal_viewpoints']
+            reached_first_goal = False
+            for goal in first_goal_viewpoints:
+                if current_viewpoint == goal:
+                    reached_first_goal = True
+                    break
+            if reached_first_goal and not ob['reached_first_goal']:
+                ob['reached_first_goal'] = True
+                ob['goal_viewpoints'] = ob['second_goal_viewpoints']
+                print("Reached first goal in def step().") # For debugging
+
+        return obs
 
     def prepend_instruction(self, idx, instr):
         ''' Prepend subgoal to end-goal. '''
