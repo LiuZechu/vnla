@@ -267,7 +267,7 @@ class VNLABatch():
             if reached_first_goal and not ob['reached_first_goal']:
                 ob['reached_first_goal'] = True
                 ob['goal_viewpoints'] = ob['second_goal_viewpoints']
-                print("Reached first goal in def step().") # For debugging
+                # print("Reached first goal in def step().") # For debugging
 
         return obs
 
