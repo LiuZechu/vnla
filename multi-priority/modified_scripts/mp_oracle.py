@@ -350,14 +350,18 @@ class MultistepShortestPathOracle(ShortestPathOracle):
             # if action == (0, 0, 0):
             #     break
 
+            #if ob['reached_first_goal']:
+            #    print("after reaching first goal")
+            #    print(ob)
+
             reached_first_goal = ob['reached_first_goal']
             if action == (0, 0, 0) and not ob['reached_first_goal']:
                 ob['reached_first_goal'] = True
                 ob['goal_viewpoints'] = ob['second_goal_viewpoints']
-                # print("Changed to second_goal_viewpoints. ob now is: ")
+                # print("Changed to second_goal_viewpoints.")
                 # print(ob)
             elif action == (0, 0, 0) and ob['reached_first_goal']:
-                # print("Reached second goal. ob now is: ")
+                # print("Reached second goal.")
                 # print(ob)
                 break
 
