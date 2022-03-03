@@ -134,7 +134,7 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
     test_feedback  = { 'nav' : 'argmax', 'ask' : 'argmax' }
 
     start = time.time()
-    sr = 'second_success_rate'
+    sr = 'both_succeed_rate'
 
 
     for idx in range(start_iter, end_iter, hparams.log_every):
@@ -196,7 +196,7 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
                     'both_succeed_rate', 'both_fail_rate', 'both_succeed_steps',
                     'first_nav_error', 'second_nav_error', 'length', 'steps']:
                     metrics[metric][env_name] = (val, len(traj))
-                if metric in ['first_success_rate', 'second_success_rate', 'steps',
+                if metric in ['first_success_rate', 'second_success_rate', 'steps', 'both_succeed_rate',
                     'oracle_rate', 'first_room_success_rate', 'second_room_success_rate']:
                     loss_str += ', %s: %.3f' % (metric, val)
 
@@ -207,6 +207,11 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
             loss_str += ', %s: %.2f' % ('length', score_summary['length'])
             loss_str += ', %s: %.2f' % ('steps', score_summary['steps'])
             loss_str += compute_ask_stats(traj)
+
+            # NOTE: Added this to save each iter's score_summary to a file for analysis
+            f = open("./intermediate_scores.txt", "a")
+            f.write(str(score_summary))
+            f.close()
 
             if not eval_mode and metrics[sr][env_name][0] > best_metrics[env_name]:
                 should_save_ckpt.append(env_name)
