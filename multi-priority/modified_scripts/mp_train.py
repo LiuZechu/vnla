@@ -134,7 +134,7 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
     test_feedback  = { 'nav' : 'argmax', 'ask' : 'argmax' }
 
     start = time.time()
-    sr = 'both_succeed_rate'
+    sr = 'both_succeed_rate' # NOTE: Change here based on dataset
 
 
     for idx in range(start_iter, end_iter, hparams.log_every):
@@ -194,10 +194,13 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
                     'first_room_success_rate', 'second_room_success_rate',
                     'first_succeed_second_fail_rate', 'first_fail_second_succeed_rate',
                     'both_succeed_rate', 'both_fail_rate', 'both_succeed_steps',
-                    'first_nav_error', 'second_nav_error', 'length', 'steps']:
+                    'first_nav_error', 'second_nav_error', 'length', 'steps',
+                    'original_nav_errors', 'original_trajectory_lengths', 'original_success_rate',
+                    'original_trajectory_steps', 'original_room_success_rate']:
                     metrics[metric][env_name] = (val, len(traj))
                 if metric in ['first_success_rate', 'second_success_rate', 'steps', 'both_succeed_rate',
-                    'oracle_rate', 'first_room_success_rate', 'second_room_success_rate']:
+                    'oracle_rate', 'first_room_success_rate', 'second_room_success_rate',
+                    'original_success_rate', 'original_room_success_rate']:
                     loss_str += ', %s: %.3f' % (metric, val)
 
             loss_str += '\n *** OTHER METRICS: '

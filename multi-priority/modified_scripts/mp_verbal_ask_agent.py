@@ -220,8 +220,6 @@ class VerbalAskAgent(AskAgent):
             a_t = torch.tensor(a_t_list, dtype=torch.long, device=self.device)
 
             # Take nav action
-            # print("env_action: ")
-            # print(env_action)
             obs = self.env.step(env_action, obs)
 
             # Save trajectory output

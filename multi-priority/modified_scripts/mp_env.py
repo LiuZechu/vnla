@@ -119,7 +119,13 @@ class VNLABatch():
         if self.no_room:
             key = (item['start_region_name'], item['object_name']) # NOTE: haven't changed for no_room
         else:
-            key = (item['start_region_name'], item['first_end_region_name'], item['second_end_region_name'])
+            # NOTE: differentiate between single vs multi-priority
+            if 'first_end_region_name' in item:
+                # multi-priority task
+                key = (item['start_region_name'], item['first_end_region_name'], item['second_end_region_name'])
+            else:
+                # original task
+                key = (item['start_region_name'], item['end_region_name'])
         return key
 
     def encode(self, instr):
@@ -155,7 +161,6 @@ class VNLABatch():
     def _next_minibatch(self):
         if self.ix == 0:
             self.random.shuffle(self.data)
-        # self.ix += self.batch_size * 3 # NOTE: ADDED THIS LINE FOR DEBUGGING!
         batch = self.data[self.ix:self.ix+self.batch_size]
         if len(batch) < self.batch_size:
             self.random.shuffle(self.data)
@@ -177,7 +182,9 @@ class VNLABatch():
         for i, (feature, state) in enumerate(self.env.getStates()):
             item = self.batch[i]
             # NOTE: changed here
-            goal_viewpoints = item['first_goal_viewpoints']
+            goal_viewpoints = item['goal_viewpoints'] # original task
+            if 'first_goal_viewpoints' in item:
+                goal_viewpoints = item['first_goal_viewpoints'] # multi-priority task
             reached_first_goal = False
             if prev_obs is not None:
                 goal_viewpoints = prev_obs[i]['goal_viewpoints']
@@ -195,11 +202,12 @@ class VNLABatch():
                 'navigableLocations' : state.navigableLocations,
                 'instruction' : self.instructions[i],
                 'goal_viewpoints': goal_viewpoints, # NOTE: change this to second_goal_viewpoints after reaching 
-                'first_goal_viewpoints' : item['first_goal_viewpoints'], # NOTE: changed here
-                'second_goal_viewpoints' : item['second_goal_viewpoints'], # NOTE: changed here
-                'init_viewpoint' : item['start_viewpoint'], # NOTE: changed here
-                'reached_first_goal': reached_first_goal # NOTE: changed here
+                'init_viewpoint' : item['start_viewpoint'] # NOTE: changed here
             })
+            if 'first_goal_viewpoints' in item: # multi-priority task
+                obs[-1]['first_goal_viewpoints'] = item['first_goal_viewpoints'] # NOTE: changed here
+                obs[-1]['second_goal_viewpoints'] = item['second_goal_viewpoints'] # NOTE: changed here
+                obs[-1]['reached_first_goal'] = reached_first_goal # NOTE: changed here
             obs[-1]['max_queries'] = self.max_queries_constraints[i]
             obs[-1]['traj_len'] = self.traj_lens[i]
             if 'instr_encoding' in item:
@@ -254,20 +262,22 @@ class VNLABatch():
         self.env.makeActions(actions)
         # NOTE: changed here
         obs = self._get_obs(prev_obs)
-        # Change `goal_viewpoints` and `reached_first_goal` after reaching first goal
-        for i in range(len(obs)):
-            ob = obs[i]
-            current_viewpoint = ob['viewpoint']
-            first_goal_viewpoints = ob['first_goal_viewpoints']
-            reached_first_goal = False
-            for goal in first_goal_viewpoints:
-                if current_viewpoint == goal:
-                    reached_first_goal = True
-                    break
-            if reached_first_goal and not ob['reached_first_goal']:
-                ob['reached_first_goal'] = True
-                ob['goal_viewpoints'] = ob['second_goal_viewpoints']
-                # print("Reached first goal in def step().") # For debugging
+
+        if 'first_goal_viewpoints' in ob: # for multi-priority task
+            # Change `goal_viewpoints` and `reached_first_goal` after reaching first goal
+            for i in range(len(obs)):
+                ob = obs[i]
+                current_viewpoint = ob['viewpoint']
+                first_goal_viewpoints = ob['first_goal_viewpoints']
+                reached_first_goal = False
+                for goal in first_goal_viewpoints:
+                    if current_viewpoint == goal:
+                        reached_first_goal = True
+                        break
+                if reached_first_goal and not ob['reached_first_goal']:
+                    ob['reached_first_goal'] = True
+                    ob['goal_viewpoints'] = ob['second_goal_viewpoints']
+                    # print("Reached first goal in def step().") # For debugging
 
         return obs
 
