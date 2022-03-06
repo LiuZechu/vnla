@@ -182,9 +182,11 @@ class VNLABatch():
         for i, (feature, state) in enumerate(self.env.getStates()):
             item = self.batch[i]
             # NOTE: changed here
-            goal_viewpoints = item['goal_viewpoints'] # original task
+            goal_viewpoints = None 
             if 'first_goal_viewpoints' in item:
                 goal_viewpoints = item['first_goal_viewpoints'] # multi-priority task
+            else: # original task
+                goal_viewpoints = item['goal_viewpoints'] 
             reached_first_goal = False
             if prev_obs is not None:
                 goal_viewpoints = prev_obs[i]['goal_viewpoints']
@@ -263,10 +265,10 @@ class VNLABatch():
         # NOTE: changed here
         obs = self._get_obs(prev_obs)
 
-        if 'first_goal_viewpoints' in ob: # for multi-priority task
-            # Change `goal_viewpoints` and `reached_first_goal` after reaching first goal
-            for i in range(len(obs)):
-                ob = obs[i]
+        # Change `goal_viewpoints` and `reached_first_goal` after reaching first goal
+        for i in range(len(obs)):
+            ob = obs[i]
+            if 'first_goal_viewpoints' in ob: # for multi-priority task
                 current_viewpoint = ob['viewpoint']
                 first_goal_viewpoints = ob['first_goal_viewpoints']
                 reached_first_goal = False
@@ -277,7 +279,6 @@ class VNLABatch():
                 if reached_first_goal and not ob['reached_first_goal']:
                     ob['reached_first_goal'] = True
                     ob['goal_viewpoints'] = ob['second_goal_viewpoints']
-                    # print("Reached first goal in def step().") # For debugging
 
         return obs
 
