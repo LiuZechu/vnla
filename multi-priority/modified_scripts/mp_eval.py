@@ -202,6 +202,11 @@ class Evaluation(object):
             score_summary['original_nav_errors'] = np.average(self.scores['original_nav_errors'])
             score_summary['original_trajectory_lengths'] = np.average(self.scores['original_trajectory_lengths'])
             score_summary['original_trajectory_steps'] = np.average(self.scores['original_trajectory_steps'])
+            num_original_successes = len([d for d in self.scores['original_nav_errors'] if self.check_success(d)])
+            score_summary['original_success_rate'] = float(num_original_successes)/float(len(self.scores['original_nav_errors']))
+            if not self.no_room:
+                score_summary['original_room_success_rate'] = float(sum(self.scores['original_room_successes'])) / \
+                    len(self.scores['original_room_successes'])
         if not zero_multi_priority_tasks:
             score_summary['multi_priority_num'] = len(self.scores['first_nav_errors'])
             score_summary['first_nav_error'] = np.average(self.scores['first_nav_errors'])
@@ -216,9 +221,6 @@ class Evaluation(object):
             in zip(self.scores['combined_nav_errors'], self.scores['instr_id'])]
 
         if zero_multi_priority_tasks:
-            if not self.no_room:
-                score_summary['original_room_success_rate'] = float(sum(self.scores['original_room_successes'])) / \
-                    len(self.scores['original_room_successes'])
             return score_summary, self.scores, is_success
 
         num_first_successes = len([d for d in self.scores['first_nav_errors'] if self.check_success(d)])

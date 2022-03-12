@@ -139,8 +139,8 @@ class ShortestPathOracle(object):
 
         # NOTE: added the following to solve a bug.
         # Mask invalid forward action.
-        if len(ob['navigableLocations']) <= 1:
-            return (0, 0, 0)
+        # if len(ob['navigableLocations']) <= 1:
+        #     return (0, 0, 0)
 
         scan = ob['scan']
         start_point = ob['viewpoint']
@@ -187,7 +187,6 @@ class AskOracle(object):
         self.uncertain_threshold = hparams.uncertain_threshold
         self.unmoved_threshold = hparams.unmoved_threshold
         self.agent_ask_actions = agent_ask_actions
-        self.success_radius = hparams.success_radius
 
         self.rule_a_e = hasattr(hparams, 'rule_a_e') and hparams.rule_a_e
         self.rule_b_d = hasattr(hparams, 'rule_b_d') and hparams.rule_b_d

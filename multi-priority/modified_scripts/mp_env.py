@@ -188,7 +188,7 @@ class VNLABatch():
             else: # original task
                 goal_viewpoints = item['goal_viewpoints'] 
             reached_first_goal = False
-            if prev_obs is not None:
+            if (prev_obs is not None) and ('first_goal_viewpoints' in item): # multi-priority task
                 goal_viewpoints = prev_obs[i]['goal_viewpoints']
                 reached_first_goal = prev_obs[i]['reached_first_goal']
             obs.append({

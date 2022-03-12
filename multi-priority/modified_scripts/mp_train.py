@@ -204,11 +204,13 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
                     loss_str += ', %s: %.3f' % (metric, val)
 
             loss_str += '\n *** OTHER METRICS: '
-            loss_str += '%s: %.2f' % ('first_nav_error', score_summary['first_nav_error'])
-            loss_str += '%s: %.2f' % ('second_nav_error', score_summary['second_nav_error'])
-            loss_str += ', %s: %.2f' % ('oracle_error', score_summary['oracle_error'])
-            loss_str += ', %s: %.2f' % ('length', score_summary['length'])
-            loss_str += ', %s: %.2f' % ('steps', score_summary['steps'])
+            # NOTE: only for multi-priority for now:
+            if 'first_nav_error' in score_summary:
+                loss_str += '%s: %.2f' % ('first_nav_error', score_summary['first_nav_error'])
+                loss_str += '%s: %.2f' % ('second_nav_error', score_summary['second_nav_error'])
+                loss_str += ', %s: %.2f' % ('oracle_error', score_summary['oracle_error'])
+                loss_str += ', %s: %.2f' % ('length', score_summary['length'])
+                loss_str += ', %s: %.2f' % ('steps', score_summary['steps'])
             loss_str += compute_ask_stats(traj)
 
             # NOTE: Added this to save each iter's score_summary to a file for analysis

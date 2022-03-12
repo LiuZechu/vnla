@@ -157,20 +157,15 @@ class AskAttnDecoderLSTM(nn.Module):
         if not hasattr(hparams, 'num_ask_layers'):
             hparams.num_ask_layers = 1
 
-        # for i in range(hparams.num_ask_layers):
-        #     ask_predictor_layers.append(nn.Linear(current_layer_size, next_layer_size))
-        #     ask_predictor_layers.append(nn.ReLU())
-        #     ask_predictor_layers.append(nn.Dropout(p=hparams.dropout_ratio))
-        #     current_layer_size = next_layer_size
-        #     next_layer_size //= 2
-        # ask_predictor_layers.append(nn.Linear(current_layer_size, agent_class.n_output_ask_actions()))
-        #
-        # self.ask_predictor = nn.Sequential(*tuple(ask_predictor_layers))
-        self.ask_predictor_lstm = nn.LSTM(ask_predictor_input_size, hparams.hidden_size, hparams.num_lstm_layers,
-                                     dropout=hparams.dropout_ratio if hparams.num_lstm_layers > 1 else 0,
-                                     bidirectional=False)
-
-        self.ask_predictor = nn.Linear(hparams.hidden_size, agent_class.n_output_ask_actions())
+        for i in range(hparams.num_ask_layers):
+            ask_predictor_layers.append(nn.Linear(current_layer_size, next_layer_size))
+            ask_predictor_layers.append(nn.ReLU())
+            ask_predictor_layers.append(nn.Dropout(p=hparams.dropout_ratio))
+            current_layer_size = next_layer_size
+            next_layer_size //= 2
+        ask_predictor_layers.append(nn.Linear(current_layer_size, agent_class.n_output_ask_actions()))
+        
+        self.ask_predictor = nn.Sequential(*tuple(ask_predictor_layers))
 
         self.backprop_softmax = hparams.backprop_softmax
         self.backprop_ask_features = hparams.backprop_ask_features
@@ -220,13 +215,10 @@ class AskAttnDecoderLSTM(nn.Module):
         if not self.backprop_ask_features:
             concat_ask_predictor_input = concat_ask_predictor_input.detach()
 
-        ask_output, _ = self.ask_predictor_lstm(concat_ask_predictor_input.unsqueeze(0), h)
-        ask_output = ask_output.squeeze(0)
-        ask_logit = self.ask_predictor(ask_output)
+        ask_logit = self.ask_predictor(concat_ask_predictor_input)
         ask_logit.data.masked_fill_(ask_logit_mask, -float('inf'))
-        ask_softmax = F.softmax(ask_logit, dim=1)
 
-        return new_h, alpha, nav_logit, nav_softmax, ask_softmax, new_cov
+        return new_h, alpha, nav_logit, nav_softmax, ask_logit, new_cov
 
     def forward_nav(self, nav_action, ask_action, feature, h, ctx, ctx_mask,
                     nav_logit_mask, budget=None, cov=None):
