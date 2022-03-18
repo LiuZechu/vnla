@@ -326,15 +326,16 @@ def generate_mappings_in_house(tasks):
   end_region_mapping = defaultdict(list)
   starting_point_mapping = dict()
   for task in tasks:
+    starting_point = task['paths'][0][0]
+    start_region_index = task['start_region']
+    starting_point_mapping[starting_point] = start_region_index
+    
     # skip task with multiple possible goals
     if len(task['paths']) > 1:
       continue
     assert len(task['end_regions']) == 1
     end_region_index = task['end_regions'][0]
     end_region_mapping[end_region_index].append(task)
-    starting_point = task['paths'][0][0]
-    start_region_index = task['start_region']
-    starting_point_mapping[starting_point] = start_region_index
   
   return end_region_mapping, starting_point_mapping
 
