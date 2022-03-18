@@ -139,8 +139,8 @@ class ShortestPathOracle(object):
 
         # NOTE: added the following to solve a bug.
         # Mask invalid forward action.
-        # if len(ob['navigableLocations']) <= 1:
-        #     return (0, 0, 0)
+        if len(ob['navigableLocations']) <= 1:
+            return (0, 0, 0)
 
         scan = ob['scan']
         start_point = ob['viewpoint']

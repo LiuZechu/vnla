@@ -24,8 +24,8 @@ def print_stats(dataset):
   print(f'There are {mp_num} multi-priority tasks.')
 
 def combine(dataset1, dataset2, proportion, total_num):
-  num_from_dataset1 = total_num * proportion
-  num_from_dataset2 = total_num - num_from_dataset1
+  num_from_dataset1 = int(total_num * proportion)
+  num_from_dataset2 = int(total_num - num_from_dataset1)
 
   new_dataset = []
   new_dataset.extend(random.sample(dataset1, num_from_dataset1))
@@ -36,10 +36,10 @@ def combine(dataset1, dataset2, proportion, total_num):
   return new_dataset
 
 def main():
-  original_filename = "./ori_asknav_train.json"
-  mp_filename = "./mp_asknav_train.json"
+  original_filename = "./sample_data.json"
+  mp_filename = "./sample_data.json"
   ori_proportion = 0.5 # CHANGE HERE (proportion of original tasks out of 1.0)
-  total_num = 100000 # CHANGE HERE
+  total_num = 2 # CHANGE HERE
 
   # Reading Original dataset
   f1 = open(original_filename) 
@@ -55,7 +55,7 @@ def main():
   print_stats(new_dataset) # For sanity check
 
   # Writing new dataset to file
-  output_filename = "./asknav_train.json"
+  output_filename = "./to_delete.json"
   with open(output_filename, 'w') as result_file: 
     json.dump(new_dataset, result_file, indent=4, sort_keys=True)
 
