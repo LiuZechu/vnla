@@ -354,12 +354,12 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
     while repeat_counter < 50:
       starting_point = start_task['paths'][0][0]
       start_region = starting_point_mapping[starting_point]
-      near_task = random.sample(end_region_mapping[start_region], 1)
-      random_far_region = random.sample(end_region_set, 1)
+      near_task = random.sample(end_region_mapping[start_region], 1)[0]
+      random_far_region = random.sample(end_region_set, 1)[0]
       if random_far_region == start_region:
         repeat_counter += 1
         continue
-      far_task = random.sample(end_region_mapping[random_far_region], 1)
+      far_task = random.sample(end_region_mapping[random_far_region], 1)[0]
 
       new_task, is_new_task_valid = combine_two_tasks(near_task, far_task, path_calculator)
       if counter % 500 == 0:
