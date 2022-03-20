@@ -386,7 +386,7 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
         results.append(new_task)
         counter += 1
         if not one_task_generated:
-          repeat_counter = 10
+          repeat_counter = 15
           one_task_generated = True
       if counter >= limit:
         return results
