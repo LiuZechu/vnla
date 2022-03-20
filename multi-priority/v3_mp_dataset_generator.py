@@ -234,7 +234,7 @@ def generate_task_trajectory(datapoint, first_goal, second_goal, path_calculator
   task['second_goal_viewpoints'] = [second_goal]
   trajectory = path_calculator.simulate(task)
 
-  is_valid = (len(trajectory) - 1 >= single_min * 2) and (len(trajectory) - 1 <= single_max * 2)
+  is_valid = (len(trajectory) >= single_min * 2) and (len(trajectory) <= single_max * 2)
 
   return trajectory, is_valid
 
@@ -243,25 +243,25 @@ def check_path_validity(path, single_min=3):
   return len(path) >= single_min
 
 # Combine two tasks in the same house from original VNLA into a new task with two priorities
-def combine_two_tasks(near_task, far_task, path_calculator):
+def combine_two_tasks(near_task, far_task, path_calculator, start_point, start_region, start_region_name, heading):
   assert near_task['scan'] == far_task['scan'], "Near and Far tasks are from different houses."
   
   new_task = {}
 
   new_task['scan'] = near_task['scan']
-  new_task['start_region'] = near_task['start_region']
-  new_task['start_region_name'] = near_task['start_region_name']
+  new_task['start_region'] = start_region
+  new_task['start_region_name'] = start_region_name
   new_task['first_end_regions'] = near_task['end_regions']
   new_task['first_end_region_name'] = near_task['end_region_name']
   new_task['second_end_region'] = far_task['end_regions']
   new_task['second_end_region_name'] = far_task['end_region_name']
-  new_task['initial_heading'] = near_task['heading']
+  new_task['initial_heading'] = heading
   new_task['instruction'] = combine_instructions(near_task['instructions'][0], far_task['instructions'][0])
   new_task['first_object_indices'] = near_task['object_indices']
   new_task['first_object_name'] = near_task['object_name']
   new_task['second_object_indices'] = far_task['object_indices']
   new_task['second_object_name'] = far_task['object_name']
-  new_task['start_viewpoint'] = near_task['paths'][0][0]
+  new_task['start_viewpoint'] = start_point
   new_task['instr_id'] = int(str(near_task['path_id']) + str(far_task['path_id']))
 
   first_goal_viewpoints = []
@@ -308,8 +308,8 @@ def combine_two_tasks(near_task, far_task, path_calculator):
   new_task['trajectories'] = trajectories
 
   # Add two more value items: short_path_length and long_path_length 
-  # (short_path_length is the number of steps for near_goal -> far_goal)
-  # (long_path_length is the number of steps for far_goal -> near_goal)
+  # (short_path_length is the number of steps for start -> near_goal -> far_goal)
+  # (long_path_length is the number of steps for start -> far_goal -> near_goal)
   if is_valid:
     near_goal = first_goal_viewpoints[0]
     far_goal = second_goal_viewpoints[0]
@@ -317,6 +317,9 @@ def combine_two_tasks(near_task, far_task, path_calculator):
     assert len(new_task['trajectories']) == 1, "A valid task should only have one trajectory."
     new_task['short_path_length'] = len(new_task['trajectories'][0])
     new_task['long_path_length'] = len(far_trajectory)
+    # If short_path_length is longer than or equal to long_path_length, then the task is invalid.
+    if new_task['short_path_length'] >= new_task['long_path_length']:
+      is_valid = False
 
   return new_task, is_valid
 
@@ -325,11 +328,14 @@ def combine_two_tasks(near_task, far_task, path_calculator):
 def generate_mappings_in_house(tasks):
   end_region_mapping = defaultdict(list)
   starting_point_mapping = dict()
+  region_name_mapping = dict()
   for task in tasks:
     starting_point = task['paths'][0][0]
     start_region_index = task['start_region']
+    start_region_name = task['start_region_name']
     starting_point_mapping[starting_point] = start_region_index
-    
+    region_name_mapping[start_region_index] = start_region_name
+
     # skip task with multiple possible goals
     if len(task['paths']) > 1:
       continue
@@ -337,12 +343,12 @@ def generate_mappings_in_house(tasks):
     end_region_index = task['end_regions'][0]
     end_region_mapping[end_region_index].append(task)
   
-  return end_region_mapping, starting_point_mapping
+  return end_region_mapping, starting_point_mapping, region_name_mapping
 
 # Take in original tasks from the same house and output a list of new tasks
 # `limit` indicates the max number of resultant data points. Default is 3k but can be increased to ~5k.
 def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
-  end_region_mapping, starting_point_mapping = generate_mappings_in_house(tasks)
+  end_region_mapping, starting_point_mapping, region_name_mapping = generate_mappings_in_house(tasks)
   results = []
   counter = 0
   num_invalid = 0
@@ -355,6 +361,7 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
     while repeat_counter < 50:
       starting_point = start_task['paths'][0][0]
       start_region = starting_point_mapping[starting_point]
+      heading = start_task['heading']
       if start_region not in end_region_mapping or len(end_region_mapping[start_region]) == 0:
         break
       near_task = random.sample(end_region_mapping[start_region], 1)[0]
@@ -364,7 +371,9 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
         continue
       far_task = random.sample(end_region_mapping[random_far_region], 1)[0]
 
-      new_task, is_new_task_valid = combine_two_tasks(near_task, far_task, path_calculator)
+      new_task, is_new_task_valid = combine_two_tasks(near_task, far_task, path_calculator, \
+        start_point=starting_point, start_region=start_region, \
+        start_region_name=region_name_mapping[start_region], heading=heading)
       if counter % 500 == 0:
         print("counter: ", counter)
         print("invalid: ", num_invalid)
@@ -374,6 +383,7 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
       if is_new_task_valid:
         results.append(new_task)
         counter += 1
+        break # break out of inner loop and proceed to next task
       if counter >= limit:
         return results
 
