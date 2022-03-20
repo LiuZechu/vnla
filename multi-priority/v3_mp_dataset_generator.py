@@ -447,10 +447,12 @@ def main():
 
   # Step Two: construct a task from every pair of tasks from the same house/scan
   all_new_tasks = []
+  num_houses_processed = 0
   for house, tasks in tasks_by_house.items():
-    print(f'Now processing {house}')
+    print(f'Now processing {house}. {num_houses_processed}/{len(tasks_by_house.keys())} done.')
     new_tasks = generate_tasks_from_same_house(tasks, path_calculator)
     all_new_tasks += new_tasks
+    num_houses_processed += 1
 
   # Step Three: randomise ordering of new tasks and write to new file
   random.shuffle(all_new_tasks)
