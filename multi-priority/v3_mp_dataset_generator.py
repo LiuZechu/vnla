@@ -201,18 +201,19 @@ class PathCalculator(object):
 
 ############################################################################
 
-def group_tasks_by_house(filename):
-  f = open(filename) 
-  json_data = json.load(f)
-
+def group_tasks_by_house(filenames):
   tasks_by_house = dict() # `scan` -> list of tasks
-  for task in json_data:
-    scan = task['scan']
-    if scan not in tasks_by_house:
-      tasks_by_house[scan] = []
-    tasks_by_house[scan].append(task)
   
-  f.close()
+  for filename in filenames:
+    f = open(filename) 
+    json_data = json.load(f)
+    for task in json_data:
+      scan = task['scan']
+      if scan not in tasks_by_house:
+        tasks_by_house[scan] = []
+      tasks_by_house[scan].append(task)
+    f.close()
+
   return tasks_by_house
 
 def combine_instructions(instruction1, instruction2):
@@ -356,9 +357,10 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
   end_region_set = set(end_region_mapping.keys())
 
   for start_task in tasks:
-    repeat_counter = 0 # Repeat inner loop for a few times in case most attempts are all invalid
-    
-    while repeat_counter < 5:
+    repeat_counter = 5 # Repeat inner loop for a few times in case most attempts are all invalid
+    one_task_generated = False # When flipped to True, the script will generate more from this start point 
+
+    while repeat_counter > 0:
       starting_point = start_task['paths'][0][0]
       start_region = starting_point_mapping[starting_point]
       heading = start_task['heading']
@@ -367,7 +369,7 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
       near_task = random.sample(end_region_mapping[start_region], 1)[0]
       random_far_region = random.sample(end_region_set, 1)[0]
       if random_far_region == start_region:
-        repeat_counter += 1
+        repeat_counter -= 1
         continue
       far_task = random.sample(end_region_mapping[random_far_region], 1)[0]
 
@@ -378,12 +380,14 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
         print("counter: ", counter)
         print("invalid: ", num_invalid)
       if not is_new_task_valid:
-        repeat_counter += 1
+        repeat_counter -= 1
         num_invalid += 1
       if is_new_task_valid:
         results.append(new_task)
         counter += 1
-        break # break out of inner loop and proceed to next task
+        if not one_task_generated:
+          repeat_counter = 10
+          one_task_generated = True
       if counter >= limit:
         return results
 
@@ -418,18 +422,17 @@ def print_tasks_stats(all_tasks):
   print(f'Average traj length: {average_traj_length}')
 
 # Return a PathCalculator to generate paths for tasks
-def setup(filename):
+def setup(filenames):
 
   # Get a set of scans in the dataset
-  f = open(filename) 
-  json_data = json.load(f)
-
   scans = set()
-  for task in json_data:
-    scan = task['scan']
-    scans.add(scan)
-  
-  f.close()
+  for filename in filenames:
+    f = open(filename) 
+    json_data = json.load(f)
+    for task in json_data:
+      scan = task['scan']
+      scans.add(scan)
+    f.close()
 
   path_calculator = PathCalculator()
   path_calculator.add_scans(scans)
@@ -439,11 +442,12 @@ def setup(filename):
 def main():
 
   # Step One: group tasks in the same house (identified by `scan`)
-  json_filename = './original_datasets/ori_asknav_train.json' # CHANGE HERE
-  tasks_by_house = group_tasks_by_house(json_filename) # `scan` -> list of tasks
+  json_filenames = ['./original_datasets/ori_asknav_train.json', \
+    './original_datasets/ori_asknav_test_seen.json', './original_datasets/ori_asknav_val_seen.json'] # CHANGE HERE
+  tasks_by_house = group_tasks_by_house(json_filenames) # `scan` -> list of tasks
 
   # Step 1.5: set up PathCalculator
-  path_calculator = setup(json_filename)
+  path_calculator = setup(json_filenames)
 
   # Step Two: construct a task from every pair of tasks from the same house/scan
   all_new_tasks = []
@@ -458,8 +462,13 @@ def main():
   random.shuffle(all_new_tasks)
   # all_new_tasks = all_new_tasks[:5000] # NOTE: CHANGE HERE; added this line to restrict size of val/test sets
   print_tasks_stats(all_new_tasks)
+  # Save to various files
+  with open('./v3_datasets/v3_asknav_val_seen.json', 'w') as result_file: # CHANGE HERE
+    json.dump(all_new_tasks[:5000], result_file, indent=4, sort_keys=True)
+  with open('./v3_datasets/v3_asknav_test_seen.json', 'w') as result_file: # CHANGE HERE
+    json.dump(all_new_tasks[5000:10000], result_file, indent=4, sort_keys=True)
   with open('./v3_datasets/v3_asknav_train.json', 'w') as result_file: # CHANGE HERE
-    json.dump(all_new_tasks, result_file, indent=4, sort_keys=True)
+    json.dump(all_new_tasks[10000:], result_file, indent=4, sort_keys=True)
 
 
 if __name__ == "__main__":
