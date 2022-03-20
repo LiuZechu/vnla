@@ -358,7 +358,7 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
   for start_task in tasks:
     repeat_counter = 0 # Repeat inner loop for a few times in case most attempts are all invalid
     
-    while repeat_counter < 50:
+    while repeat_counter < 5:
       starting_point = start_task['paths'][0][0]
       start_region = starting_point_mapping[starting_point]
       heading = start_task['heading']
