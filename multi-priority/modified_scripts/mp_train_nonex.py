@@ -199,6 +199,7 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
                     'correct_and_wrong_order_success_rate',
                     'first_nav_error', 'second_nav_error', 'length', 'steps',
                     'original_nav_errors', 'original_trajectory_lengths', 'original_success_rate',
+                    'correct_order_longer_steps', 'wrong_order_shorter_steps',
                     'original_trajectory_steps', 'original_room_success_rate']:
                     metrics[metric][env_name] = (val, len(traj))
                 if metric in ['first_success_rate', 'second_success_rate', 'steps', 'both_succeed_rate',
@@ -206,6 +207,7 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
                     'wrong_order_success_rate', 'correct_order_success_rate',
                     'wrong_order_actual_steps', 'wrong_order_expected_steps',
                     'correct_order_actual_steps', 'correct_order_expected_steps',
+                    'correct_order_longer_steps', 'wrong_order_shorter_steps',
                     'correct_and_wrong_order_success_rate',
                     'original_success_rate', 'original_room_success_rate']:
                     loss_str += ', %s: %.3f' % (metric, val)

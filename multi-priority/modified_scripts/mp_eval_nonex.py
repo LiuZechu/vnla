@@ -265,9 +265,11 @@ class Evaluation(object):
         num_end_first_goal = 0 # number of tasks that end at the first (wrong) goal, after passing through 2nd goal
         total_wrong_steps_actual = 0 # sum up the actual steps taken for those with the wrong order but succeed in both goals
         total_wrong_steps_expected = 0 # sum up the expected steps taken for those with the wrong order but succeed in both goals
+        total_wrong_steps_shorter_path = 0 # sum up the steps taken for those with the wrong order but succeed in both goals, if they had taken shorter paths.
         num_end_second_goal = 0 # number of tasks that end at the second (correct) goal, after passing through 1st goal
         total_correct_steps_actual = 0 # sum up the actual steps taken for those with the correct order but succeed in both goals
         total_correct_steps_expected = 0 # sum up the expected steps taken for those with the correct order but succeed in both goals
+        total_correct_steps_longer_path = 0 # sum up the steps taken for those with the correct order but succeed in both goals, if they had taken longer paths.
         total_num = len(self.scores['first_nav_errors'])
         for i in range(total_num):
             end_first_goal = self.check_success(self.scores['wrong_first_nav_errors'][i]) # reached in the wrong order
@@ -278,20 +280,24 @@ class Evaluation(object):
                     num_end_second_goal += 1
                     total_correct_steps_actual += self.scores['trajectory_steps'][i]
                     total_correct_steps_expected += 0.5 * self.scores['short_path_lengths'][i] + 0.5 * self.scores['long_path_lengths'][i]
+                    total_correct_steps_longer_path += self.scores['long_path_lengths'][i]
             elif end_first_goal: # wrong order
                 pass_through_second_goal = self.check_success(self.scores['wrong_second_nav_errors'][i])
                 if pass_through_second_goal: # success!
                     num_end_first_goal += 1
                     total_wrong_steps_actual += self.scores['trajectory_steps'][i]
                     total_wrong_steps_expected += 0.5 * self.scores['short_path_lengths'][i] + 0.5 * self.scores['long_path_lengths'][i]
+                    total_wrong_steps_shorter_path += self.scores['short_path_lengths'][i]
 
         score_summary['wrong_order_success_rate'] = float(num_end_first_goal)/float(total_num)
         score_summary['correct_order_success_rate'] = float(num_end_second_goal)/float(total_num)
         score_summary['both_succeed_rate'] = score_summary['correct_order_success_rate']
         score_summary['wrong_order_actual_steps'] = float(total_wrong_steps_actual)/float(num_end_first_goal)
         score_summary['wrong_order_expected_steps'] = float(total_wrong_steps_expected)/float(num_end_first_goal)
+        score_summary['wrong_order_shorter_steps'] = float(total_wrong_steps_shorter_path)/float(num_end_first_goal)
         score_summary['correct_order_actual_steps'] = float(total_correct_steps_actual)/float(num_end_second_goal)
         score_summary['correct_order_expected_steps'] = float(total_correct_steps_expected)/float(num_end_second_goal)
+        score_summary['correct_order_longer_steps'] = float(total_correct_steps_longer_path)/float(num_end_second_goal)
         score_summary['correct_and_wrong_order_success_rate'] = float(num_end_first_goal + num_end_second_goal)/float(total_num)
 
         oracle_successes = len([d for d in self.scores['oracle_errors'] if self.check_success(d)])

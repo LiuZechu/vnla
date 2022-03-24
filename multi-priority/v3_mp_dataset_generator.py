@@ -382,7 +382,7 @@ def generate_tasks_from_same_house(tasks, path_calculator, limit=3000):
       if not is_new_task_valid:
         repeat_counter -= 1
         num_invalid += 1
-      if is_new_task_valid:
+      else:
         results.append(new_task)
         counter += 1
         if not one_task_generated:
