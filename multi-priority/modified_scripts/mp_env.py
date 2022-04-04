@@ -117,7 +117,13 @@ class VNLABatch():
 
     def make_traj_estimate_key(self, item):
         if self.no_room:
-            key = (item['start_region_name'], item['object_name']) # NOTE: haven't changed for no_room
+            # NOTE: differentiate between single vs multi-priority
+            if 'first_end_region_name' in item:
+                # multi-priority task
+                key = (item['start_region_name'], item['first_object_name'], item['second_object_name'])
+            else:
+                # original task
+                key = (item['start_region_name'], item['object_name'])
         else:
             # NOTE: differentiate between single vs multi-priority
             if 'first_end_region_name' in item:
