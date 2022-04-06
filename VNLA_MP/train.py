@@ -134,8 +134,8 @@ def train(train_env, val_envs, agent, model, optimizer, start_iter, end_iter,
     test_feedback  = { 'nav' : 'argmax', 'ask' : 'argmax' }
 
     start = time.time()
-    # sr = 'both_succeed_rate' # NOTE: Change here based on dataset
-    sr = 'original_success_rate'
+    sr = 'both_succeed_rate' # NOTE: use this when running on multi-priority dataset
+    # sr = 'original_success_rate' # NOTE: uncomment this when running on original dataset
 
     for idx in range(start_iter, end_iter, hparams.log_every):
         interval = min(hparams.log_every, end_iter - idx)
