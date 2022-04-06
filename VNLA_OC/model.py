@@ -130,7 +130,7 @@ class AskAttnDecoderLSTM(nn.Module):
         self.ask_embedding = nn.Embedding(agent_class.n_input_ask_actions(),
             hparams.ask_embed_size)
 
-        lstm_input_size = hparams.nav_embed_size + hparams.ask_embed_size + hparams.img_feature_size + 289 # ADDED
+        lstm_input_size = hparams.nav_embed_size + hparams.ask_embed_size + hparams.img_feature_size + 320 # ADDED
 
         self.budget_embedding = nn.Embedding(hparams.max_ask_budget, hparams.budget_embed_size)
 
