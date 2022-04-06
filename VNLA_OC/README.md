@@ -1,4 +1,4 @@
-# VNLA with Object Co-occurrence directory
+# Directory for VNLA with Object Co-occurrence
 
 This directory contains files for VNLA modified with object co-occurrence information in the form of a conditional occurrence matrix (COM). To run it, replace the original VNLA folder under `root_dir/code/tasks/` with this folder, and change its name from `VNLA_OC` to `VNLA`.
 
