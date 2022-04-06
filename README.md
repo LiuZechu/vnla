@@ -22,7 +22,7 @@ This GitHub repo contains the code accompanying my FYP, which is an extension on
     * [download data](https://github.com/debadeepta/vnla/tree/master/data),
     * [set up simulator](https://github.com/debadeepta/vnla/tree/master/code).
 3. Copy the `VNLA_XX` folder in this repo to the original repo, replacing the original `VNLA` directory under `root_dir/code/tasks/` with this folder.
-    * If you want to run multi-priority VNLA, use `VNLA_MP`. Rename it as `VNLA`. Check `README.md` in `VNLA_MP` for more details.
+    * If you want to run multi-priority VNLA, use `VNLA_MP`. Rename it as `VNLA`. Also, replace `root_dir/data/asknav/train_vocab.txt` with `multi-priority/train_vocab.txt` from this repo. Check `README.md` in `VNLA_MP` for more details.
     * If you want to run VNLA with object co-occurrence, use `VNLA_OC`. Rename it as `VNLA`. Check `README.md` in `VNLA_OC` for more details.
 4. Run experiments at `root_dir/code/tasks/VNLA/scripts/`.
 
