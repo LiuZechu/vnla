@@ -148,13 +148,7 @@ class VNLABatch():
             key = self.make_traj_estimate_key(item)
             self.traj_len_estimates[key].extend(
                 len(t) for t in item['trajectories'])
-
-            # for j,instr in enumerate(item['instructions']):
-            #     new_item = dict(item)
-            #     del new_item['instructions']
-            #     new_item['instr_id'] = '%s_%d' % (item['path_id'], j)
-            #     new_item['instruction'] = instr
-            #     self.data.append(new_item)            
+          
             new_item = dict(item)
             self.data.append(new_item)
 
@@ -209,7 +203,7 @@ class VNLABatch():
                 'step' : state.step,
                 'navigableLocations' : state.navigableLocations,
                 'instruction' : self.instructions[i],
-                'goal_viewpoints': goal_viewpoints, # NOTE: change this to second_goal_viewpoints after reaching 
+                'goal_viewpoints': goal_viewpoints, # NOTE: this will be changed to second_goal_viewpoints after reaching 
                 'init_viewpoint' : item['start_viewpoint'] # NOTE: changed here
             })
             if 'first_goal_viewpoints' in item: # multi-priority task
@@ -236,9 +230,6 @@ class VNLABatch():
         self._next_minibatch()
 
         scanIds = [item['scan'] for item in self.batch]
-        # NOTE: changed here
-        # these are the `start_viewpoint`s
-        # print("RESET!")
         viewpointIds = [item['start_viewpoint'] for item in self.batch]
         headings = [item['initial_heading'] for item in self.batch]
         self.instructions = [item['instruction'] for item in self.batch]

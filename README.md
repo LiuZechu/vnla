@@ -19,16 +19,16 @@ This GitHub repo contains the code accompanying my FYP, which is an extension on
 ## File Organisation on SoC Server
 If you have access to my files on SoC server, this section may be helpful for you.
 
-For files in the `VNLA`/`VNLA_XX` folders, please refer to `README.md` files in `VNLA_MP` and `VNLA_OC` in this repo for more details.
+For files in the `~/vnla/code/tasks/VNLA`/`VNLA_XX` folders, please refer to `README.md` files in `VNLA_MP` and `VNLA_OC` in this repo for more details.
 
 On the server, the directory at `~/vnla/data/asknav` contains different versions of datasets. Here's what the prefixes mean: `imp`: implicit tasks, `mixed075`: mixes original and explicit multi-priority tasks in the ratio 0.75:0.25, `ori`: original tasks, `ori_trans`: original datasets transformed to suit the format that the new agent can process, `mp or [no prefix]`: explicit tasks. There are also some scripts to manipulate datasets. Note: when running an experiment on a particular version of datasets, remove the prefix (e.g. `imp_asknav_test_seen.json` --> `asknav_test_seen.json`).
 
 Also, the directory at `~/vnla/data/noroom` on the server contains two versions with different prefixes: `ori`: original noroom datasets, `ex`: explicit multi-priority **test** datasets without room labels. Remove the prefixes when running.
 
 The folder `~/vnla/code/tasks` has many `VNLA` or `VNLA_xx` folders:
-- `VNLA`: multi-priority agent
+- `VNLA`: [multi-priority agent](https://github.com/LiuZechu/vnla/tree/master/VNLA_MP)
 - `VNLA_ORI`: original 
-- `VNLA_ORI_COOC`: original + modified with COM
+- `VNLA_ORI_COOC`: [original + modified with COM](https://github.com/LiuZechu/vnla/tree/master/VNLA_OC)
 - `VNLA_QA`: Yuxuan's version
 - `VNLA_QA_COOC`: Yuxuan's version + modified with COM
 To run one of them, rename it as `VNLA`.

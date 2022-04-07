@@ -38,12 +38,8 @@ class Evaluation(object):
         for item in data:
             self.gt[str(item['instr_id'])] = item
             if isinstance(item['instr_id'], int):
-                # self.instr_ids.extend(['%d_%d' % (item['path_id'],i)
-                #     for i in range(len(item['instructions']))])
                 self.instr_ids.append(str(item['instr_id']))
             else:
-                # self.instr_ids.extend(['%s_%d' % (item['path_id'],i)
-                #     for i in range(len(item['instructions']))])
                 self.instr_ids.append(item['instr_id'])
             scans.append(item['scan'])
         self.instr_ids = set(self.instr_ids)
@@ -67,7 +63,6 @@ class Evaluation(object):
         return near_id
 
     def _score_item(self, instr_id, path):
-        # gt = self.gt[instr_id[:instr_id.rfind('_')]]
         gt = self.gt[instr_id]
         scan = gt['scan']
 
@@ -143,10 +138,6 @@ class Evaluation(object):
 
             if not self.no_room:
                 first_goal_room = second_goal_room = None
-                # for shortest_path in gt['paths']:
-                #     assert goal_room is None or goal_room == \
-                #         self.panos_to_region[scan][shortest_path[-1]]
-                #     goal_room = self.panos_to_region[scan][shortest_path[-1]]
                 
                 # For first goal
                 for goal_viewpoint in gt['first_goal_viewpoints']:
@@ -184,8 +175,6 @@ class Evaluation(object):
                     self._score_item(str(item['instr_id']), item['trajectory'])
         assert len(instr_ids) == 0, 'Missing %d of %d instruction ids from %s - not in %s'\
                        % (len(instr_ids), len(self.instr_ids), ",".join(self.splits), output_file)
-        # assert len(self.scores['first_nav_errors']) == len(self.instr_ids)
-        # assert len(self.scores['second_nav_errors']) == len(self.instr_ids)
         
         zero_multi_priority_tasks = 'first_nav_errors' not in self.scores
         zero_original_tasks = 'original_nav_errors' not in self.scores
@@ -215,8 +204,6 @@ class Evaluation(object):
             score_summary['steps'] = np.average(self.scores['trajectory_steps'])
             score_summary['length'] = np.average(self.scores['trajectory_lengths'])
 
-        # NOTE: is_success needs to take into account both kinds of tasks
-        # NOTE again: for multi-priority tasks, is_success doesn't take into account the first success yet!
         is_success = [(instr_id, self.check_success(d)) for d, instr_id
             in zip(self.scores['combined_nav_errors'], self.scores['instr_id'])]
 

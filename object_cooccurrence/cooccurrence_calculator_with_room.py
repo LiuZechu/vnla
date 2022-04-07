@@ -156,14 +156,14 @@ def main():
   normalised_matrix_2 = normalise_rowwise(room_obj_cooc_matrix)
 
   # save matrix
-  tensor = torch.FloatTensor(normalised_matrix_1)
-  torch.save(tensor, 'matrix.pt', _use_new_zipfile_serialization=False)
+  # tensor = torch.FloatTensor(normalised_matrix_1)
+  # torch.save(tensor, 'matrix.pt', _use_new_zipfile_serialization=False)
 
   # print("matrix dimension is: ")
   # print(len(normalised_matrix_1))
   # print("====")
 
-  # visualise(normalised_matrix_1, normalised_matrix_2, "PMI Normalised", "Row-wise Normalised", is_room_included=True)
+  visualise(normalised_matrix_1, normalised_matrix_2, "PMI Normalised", "Row-wise Normalised", is_room_included=True)
 
 if __name__ == "__main__":
   main()

@@ -204,13 +204,6 @@ class AskOracle(object):
         if current_point == goal_point and \
            agent_decision == nav_oracle.agent_nav_actions.index('forward'):
             return self.ASK, 'arrive'
-        # NOTE: this will be changed to if the agent is near any of the goals
-        # agent_decision = int(np.argmax(ob['nav_dist']))
-        # _, nearest_first_or_second_goal = \
-        #     nav_oracle._find_nearest_point(scan, current_point, ob['first_goal_viewpoints'] + ob['second_goal_viewpoints'])
-        # d, _ = nav_oracle._find_nearest_point(scan, current_point, [nearest_first_or_second_goal])
-        # if d <= self.success_radius:
-        #     return self.ASK, 'arrive'
 
         start_point = ob['init_viewpoint']
         d, _ = nav_oracle._find_nearest_point_on_a_path(scan, current_point, start_point, goal_point)
@@ -263,13 +256,6 @@ class AskOracle(object):
         if current_point == goal_point and \
            agent_decision == nav_oracle.agent_nav_actions.index('forward'):
             return self.ASK, 'arrive'
-        # NOTE: this will be changed to if the agent is near any of the goals
-        # agent_decision = int(np.argmax(ob['nav_dist']))
-        # _, nearest_first_or_second_goal = \
-        #     nav_oracle._find_nearest_point(scan, current_point, ob['first_goal_viewpoints'] + ob['second_goal_viewpoints'])
-        # d, _ = nav_oracle._find_nearest_point(scan, current_point, [nearest_first_or_second_goal])
-        # if d <= self.success_radius:
-        #     return self.ASK, 'arrive'
 
         start_point = ob['init_viewpoint']
         # Find closest point to the current point on the path from start point
@@ -328,7 +314,7 @@ class MultistepShortestPathOracle(ShortestPathOracle):
         self.n_steps = n_steps
         self.env_nav_actions = env_nav_actions
 
-    # NOTE: MAIN PART to modify for multi-priority goals
+    # NOTE: main part to modify for multi-priority goals
     def _shortest_path_actions(self, ob):
         actions = []
         self.sim.newEpisode(ob['scan'], ob['viewpoint'], ob['heading'], ob['elevation'])
@@ -368,11 +354,7 @@ class MultistepShortestPathOracle(ShortestPathOracle):
             if action == (0, 0, 0) and not ob['reached_first_goal']:
                 ob['reached_first_goal'] = True
                 ob['goal_viewpoints'] = ob['second_goal_viewpoints']
-                # print("Changed to second_goal_viewpoints.")
-                # print(ob)
             elif action == (0, 0, 0) and ob['reached_first_goal']:
-                # print("Reached second goal.")
-                # print(ob)
                 break
 
             state = self.sim.getState()
