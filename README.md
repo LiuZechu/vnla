@@ -6,6 +6,8 @@
 
 See report [here](https://github.com/LiuZechu/vnla/blob/master/FYP_Final_Report_LiuZechu.pdf).
 
+See video demo [here](https://youtu.be/NuvTGVC_Fyw).
+
 ## Overview
 This GitHub repo contains the code accompanying my FYP, which is an extension on _Vision-based Navigation with Language-based Assistance (VNLA) via Imitation Learning with Indirect Intervention_ by Khanh Nguyen, Debadeepta Dey, Chris Brockett, and Bill Dolan (access the original paper [here](https://arxiv.org/abs/1812.04155)). VNLA's GitHub repo can be accessed at <https://github.com/debadeepta/vnla>. This work is also partly based on Yuxuan's extension on VNLA at <https://github.com/HanYuxuanHYX/NUS-CP3106>.
 
