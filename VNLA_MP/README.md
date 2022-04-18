@@ -1,6 +1,6 @@
 # Multi-priority VNLA directory
 
-This directory contains files for multi-priority VNLA [default: **explict** tasks]. To run it, replace the original VNLA folder under `root_dir/code/tasks/` with this folder, and change its name from `VNLA_MP` to `VNLA`. In addition, remember to navigate to `root_dir/data/asknav/` and make sure you have the correct training/validation/testing datasets named `asknav_xxx.json`.
+This directory contains files for multi-priority VNLA [default: **explict** tasks]. To run it, replace the original VNLA folder under `root_dir/code/tasks/` with this folder, and change its name from `VNLA_MP` to `VNLA`. In addition, remember to navigate to `root_dir/data/asknav/` and make sure you have the correct training/validation/testing datasets named `asknav_xxx.json`. Also, add the words "first" and "then" to `root_dir/data/asknav/train_vocab.txt`.
 
 To run it on **implicit** tasks, replace `train.py` with `train_implicit.py` and rename it as `train.py`. Similarly, replace `eval.py` with `eval_implicit.py` and rename it as `eval.py`.
 
